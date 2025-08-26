@@ -1,0 +1,34 @@
+# Ignore system files
+.DS_Store
+Thumbs.db
+
+# Ignore IDE files
+.vscode/
+.idea/
+
+# Ignore logs
+*.log
+
+# Ignore sensitive files
+config.php
+.env
+
+# Ignore cache
+*.cache
+
+# Ignore node_modules (if applicable)
+node_modules/
+
+# Ignore compiled files
+*.pyc
+*.pyo
+*.exe
+*.dll
+
+# Ignore temporary files
+*.tmp
+*.swp
+*.bak
+
+# Ignore uploads
+uploads/

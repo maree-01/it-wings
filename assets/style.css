@@ -1,0 +1,5567 @@
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #f4f6fb;
+    color: #222;
+    line-height: 1.6;
+}
+/* --- Custom Banner Enhancements (Aug 2025) --- */
+.hero-banner:before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(circle at 15% 25%, rgba(255,179,0,0.25), transparent 60%),
+        radial-gradient(circle at 85% 70%, rgba(63,81,181,0.35), transparent 65%),
+        linear-gradient(120deg, rgba(10,15,60,0.6), rgba(26,35,126,0.2));
+    mix-blend-mode: screen;
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* Glass grid backdrop for more tech feel */
+.hero-banner:after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px);
+    background-size: 60px 60px, 60px 60px;
+    mask: linear-gradient(to bottom, rgba(255,255,255,0.7), rgba(255,255,255,0));
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* Ensure slide overlay sits below new decorative layers */
+.slide-overlay { z-index: 0; }
+
+/* DevOps modern layout: place widgets in a responsive grid instead of stacking same center */
+.devops-modern { display: grid; grid-template-areas: "title title" "cloud pipeline" "cluster pipeline"; grid-template-columns: 1fr 1fr; grid-auto-rows: minmax(140px, auto); width: 680px; height: 520px; padding-top: 40px; }
+.devops-modern .devops-showcase-title { grid-area: title; position: static; transform: none; margin-bottom: 10px; }
+.devops-modern .cloud-dashboard { grid-area: cloud; position: relative; top: auto; left: auto; transform: none; margin: 0; }
+.devops-modern .pipeline-visualizer { grid-area: pipeline; position: relative; top: auto; left: auto; right: auto; transform: none; margin: 0; }
+.devops-modern .container-orchestrator { grid-area: cluster; position: relative; top: auto; left: auto; bottom: auto; transform: none; margin: 0; }
+
+/* Remove long showcase animation & overlapping for grid mode */
+.devops-modern .devops-item { animation: fadeInUp 1s ease forwards; }
+.devops-modern .cloud-dashboard { animation-delay: .2s; }
+.devops-modern .pipeline-visualizer { animation-delay: .4s; }
+.devops-modern .container-orchestrator { animation-delay: .6s; }
+
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(25px); } to { opacity:1; transform: translateY(0);} }
+
+/* Responsive tweak */
+@media (max-width: 1024px){
+  .devops-modern { grid-template-areas: "title" "cloud" "pipeline" "cluster"; grid-template-columns: 1fr; height: auto; width: 100%; }
+  .devops-modern .devops-item { width: 100%; }
+}
+/* --- End Banner Enhancements --- */
+* {
+    box-sizing: border-box;
+}
+h2 {
+    font-size: 2.2rem;
+    text-align: center;
+    margin-bottom: 15px;
+    color: #1a237e;
+}
+.section-subtitle {
+    text-align: center;
+    color: #666;
+    font-size: 1.1rem;
+    margin-bottom: 40px;
+}
+header {
+    background: #1a237e;
+    color: #fff;
+    padding: 20px 0;
+    box-shadow: 0 2px 8px rgba(30,35,126,0.08);
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+}
+.header-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.logo-wrap {
+    display: flex;
+    align-items: center;
+}
+.logo {
+    height: 48px;
+    width: 48px;
+    border-radius: 50%;
+    margin-right: 16px;
+    box-shadow: 0 2px 8px rgba(60,60,100,0.12);
+    object-fit: cover;
+}
+.company-name {
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #ffb300;
+    margin: 0;
+}
+nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
+nav ul li {
+    margin-left: 20px;
+}
+nav ul li a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+    padding: 8px 12px;
+    border-radius: 5px;
+}
+nav ul li a:hover {
+    color: #ffb300;
+    background: rgba(255,179,0,0.1);
+}
+
+/* Hero Banner Slider Styles */
+.hero-banner {
+    position: relative;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    /* Base background image (visible during load / between slides) */
+    background-image: url('https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=1920&q=80');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    /* Slight dark layer handled via overlay & :before gradient */
+}
+
+.banner-slider {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: visible; /* Allow DevOps elements to be fully visible */
+}
+
+.slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transform: scale(1.05);
+    transition: opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1), 
+                transform 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.slide.active {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.slide-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(26, 35, 126, 0.8), rgba(63, 81, 181, 0.7));
+}
+
+/* Perfect Banner Layout */
+.slide-content {
+    position: relative;
+    z-index: 2;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 80px;
+    padding: 0 40px;
+    overflow: visible;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.slide-text {
+    flex: 1;
+    max-width: 550px;
+    color: white;
+    padding-right: 20px;
+}
+
+.slide-title {
+    font-size: 3.8rem;
+    font-weight: 800;
+    margin-bottom: 20px;
+    line-height: 1.1;
+    background: linear-gradient(45deg, #ffffff, #ffb300);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-align: left;
+    opacity: 0;
+    transform: translateY(40px);
+    animation: smoothSlideUp 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.3s forwards;
+}
+
+.slide-subtitle {
+    font-size: 1.4rem;
+    margin-bottom: 30px;
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.6;
+    opacity: 0;
+    transform: translateY(30px);
+    animation: smoothSlideUp 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.6s forwards;
+}
+
+.slide-features {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+    opacity: 0;
+    transform: translateY(30px);
+    animation: smoothSlideUp 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.9s forwards;
+}
+
+.feature-pill {
+    background: rgba(255, 255, 255, 0.15);
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+}
+
+.feature-pill:hover {
+    background: rgba(255, 179, 0, 0.2);
+    border-color: #ffb300;
+    transform: translateY(-2px);
+}
+
+.slide-buttons {
+    display: flex;
+    gap: 20px;
+    opacity: 0;
+    transform: translateY(30px);
+    animation: smoothSlideUp 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) 1.2s forwards;
+}
+
+.btn {
+    padding: 15px 30px;
+    border-radius: 50px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.1rem;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-primary {
+    background: linear-gradient(45deg, #ffb300, #ff8f00);
+    color: white;
+    box-shadow: 0 8px 25px rgba(255, 179, 0, 0.3);
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 35px rgba(255, 179, 0, 0.4);
+}
+
+.btn-secondary {
+    background: transparent;
+    color: white;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(10px);
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: white;
+    transform: translateY(-3px);
+}
+
+/* Slide Visual Elements - Perfect Layout */
+.slide-visual {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    opacity: 0;
+    transform: translateX(50px) scale(0.9);
+    animation: smoothSlideInRight 1.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.5s forwards;
+    overflow: visible;
+    padding: 20px;
+    position: relative;
+}
+
+/* Perfect Container Sizing for All Creative Labs */
+.creative-showcase,
+.ai-creative-lab,
+.devops-creative-lab {
+    position: relative;
+    width: 600px;
+    height: 600px;
+    max-width: 100%;
+    max-height: 100%;
+    margin: 0 auto;
+    transform-origin: center center;
+}
+
+/* Creative Showcase - Perfect Clean Layout */
+.creative-item {
+    position: absolute;
+    opacity: 0;
+    transform: translateY(40px) scale(0.85);
+    animation: creativeItemEntry 2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(25px);
+    border-radius: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    overflow: hidden;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+/* Perfect Non-Overlapping Creative Elements */
+.code-editor {
+    top: 3%;
+    left: 3%;
+    width: 280px;
+    height: 220px;
+    animation-delay: 0.3s;
+    z-index: 10;
+}
+
+.design-palette {
+    top: 3%;
+    right: 3%;
+    width: 200px;
+    height: 160px;
+    animation-delay: 0.7s;
+    z-index: 9;
+}
+
+.mobile-mockup {
+    bottom: 3%;
+    left: 8%;
+    width: 140px;
+    height: 250px;
+    animation-delay: 1.1s;
+    z-index: 8;
+}
+
+/* Animated Code Editor */
+.creative-item {
+    position: absolute;
+    opacity: 0;
+    transform: translateY(40px) scale(0.8) rotateY(-20deg);
+    animation: creativeItemEntry 2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.code-editor {
+    top: 10%;
+    left: 5%;
+    width: 280px;
+    background: rgba(30, 30, 30, 0.9);
+    border-radius: 12px;
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    animation-delay: 0.5s;
+    overflow: hidden;
+}
+
+.editor-header {
+    background: rgba(60, 60, 60, 0.8);
+    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.editor-dots {
+    display: flex;
+    gap: 5px;
+}
+
+.dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    animation: dotPulse 2s ease-in-out infinite;
+}
+
+.dot.red { background: #ff5f57; animation-delay: 0s; }
+.dot.yellow { background: #ffbd2e; animation-delay: 0.3s; }
+.dot.green { background: #28ca42; animation-delay: 0.6s; }
+
+.editor-title {
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.editor-content {
+    padding: 15px;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.8rem;
+    position: relative;
+}
+
+.code-line {
+    margin-bottom: 8px;
+    animation: typeWriter 3s steps(20) infinite;
+}
+
+.code-keyword { color: #ff79c6; }
+.code-function { color: #50fa7b; }
+.code-string { color: #f1fa8c; }
+.code-bracket { color: #8be9fd; }
+.code-indent { color: transparent; }
+
+.code-cursor {
+    position: absolute;
+    width: 2px;
+    height: 14px;
+    background: #50fa7b;
+    animation: blink 1s infinite;
+    right: 15px;
+    bottom: 15px;
+}
+
+/* Design Palette */
+.design-palette {
+    top: 45%;
+    right: 8%;
+    width: 200px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+    border-radius: 16px;
+    padding: 20px;
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    animation-delay: 1s;
+}
+
+.palette-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #fff;
+    font-weight: 600;
+    margin-bottom: 15px;
+    font-size: 0.9rem;
+}
+
+.palette-header i {
+    color: #ff6b35;
+    font-size: 1.2rem;
+}
+
+.color-swatches {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+}
+
+.swatch {
+    width: 25px;
+    height: 25px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    animation: swatchFloat 3s ease-in-out infinite;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.swatch:hover {
+    transform: scale(1.2) translateY(-5px);
+}
+
+.swatch:nth-child(1) { animation-delay: 0s; }
+.swatch:nth-child(2) { animation-delay: 0.2s; }
+.swatch:nth-child(3) { animation-delay: 0.4s; }
+.swatch:nth-child(4) { animation-delay: 0.6s; }
+.swatch:nth-child(5) { animation-delay: 0.8s; }
+
+.design-tools {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.tool-icon {
+    width: 35px;
+    height: 35px;
+    background: rgba(255, 107, 53, 0.2);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ff6b35;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    animation: toolFloat 2s ease-in-out infinite;
+}
+
+.tool-icon:nth-child(1) { animation-delay: 0s; }
+.tool-icon:nth-child(2) { animation-delay: 0.5s; }
+.tool-icon:nth-child(3) { animation-delay: 1s; }
+
+.tool-icon:hover {
+    background: rgba(255, 107, 53, 0.4);
+    transform: scale(1.1) rotate(5deg);
+}
+
+/* Mobile Mockup */
+.mobile-mockup {
+    bottom: 8%;
+    left: 25%;
+    animation-delay: 1.5s;
+}
+
+.phone-frame {
+    width: 160px;
+    height: 320px;
+    background: linear-gradient(145deg, #2d2d2d, #1a1a1a);
+    border-radius: 25px;
+    padding: 8px;
+    position: relative;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+.phone-notch {
+    width: 60px;
+    height: 6px;
+    background: #000;
+    border-radius: 3px;
+    position: absolute;
+    top: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.phone-screen {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 20px;
+    padding: 20px 15px;
+    position: relative;
+    overflow: hidden;
+}
+
+.app-header {
+    background: rgba(255, 255, 255, 0.2);
+    height: 40px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+}
+
+.app-bar {
+    width: 20px;
+    height: 3px;
+    background: #fff;
+    border-radius: 2px;
+}
+
+.app-title {
+    color: #fff;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-left: 10px;
+}
+
+.app-content {
+    margin-bottom: 20px;
+}
+
+.content-block {
+    height: 12px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 6px;
+    margin-bottom: 8px;
+    animation: contentPulse 2s ease-in-out infinite;
+}
+
+.content-block.short { width: 60%; animation-delay: 0.3s; }
+.content-block.medium { width: 80%; animation-delay: 0.6s; }
+
+.app-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.app-btn {
+    height: 35px;
+    border-radius: 18px;
+    flex: 1;
+    animation: btnPulse 3s ease-in-out infinite;
+}
+
+.app-btn.primary {
+    background: linear-gradient(135deg, #ff6b35, #f7931e);
+    animation-delay: 0s;
+}
+
+.app-btn.secondary {
+    background: rgba(255, 255, 255, 0.3);
+    animation-delay: 1s;
+}
+
+.phone-home-indicator {
+    width: 40px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 2px;
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.mobile-pulse {
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+    border: 2px solid rgba(255, 107, 53, 0.5);
+    border-radius: 35px;
+    animation: mobilePulse 2s ease-in-out infinite;
+}
+
+/* Floating Tech Icons */
+.floating-tech-icons {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+/* DevOps Creative Lab - Ultra Clean Layout */
+.devops-creative-lab {
+    position: relative;
+    width: 650px;
+    height: 650px;
+    max-width: 100%;
+    max-height: 100%;
+    margin: 0 auto;
+    transform-origin: center center;
+}
+
+.devops-item {
+    position: absolute;
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+    animation: devopsItemEntry 1.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    background: linear-gradient(135deg, rgba(255,255,255,0.20), rgba(255,255,255,0.08));
+    backdrop-filter: blur(22px) saturate(140%);
+    -webkit-backdrop-filter: blur(22px) saturate(140%);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    overflow: hidden;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.25), 0 2px 4px rgba(0,0,0,0.18);
+}
+.devops-modern:before { content: ""; position: absolute; inset: 0; background: rgba(10,15,60,0.55); border-radius: 28px; box-shadow: 0 20px 60px -10px rgba(0,0,0,0.55); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); z-index: -1; }
+
+/* DevOps Creative Lab - Clean Showcase System */
+.devops-creative-lab {
+    position: relative;
+    width: 650px;
+    height: 650px;
+    max-width: 100%;
+    max-height: 100%;
+    margin: 0 auto;
+    transform-origin: center center;
+}
+
+/* DevOps Showcase Title */
+.devops-showcase-title {
+    position: absolute;
+    top: -10%;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    color: white;
+    z-index: 15;
+    opacity: 0.9;
+}
+
+.devops-showcase-title h3 {
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #ff6b35;
+    text-shadow: 0 2px 10px rgba(255, 107, 53, 0.3);
+}
+
+.devops-showcase-title p {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.8);
+    margin: 0;
+}
+
+.devops-item {
+    position: absolute;
+    opacity: 0;
+    transform: translateY(30px) scale(0.9);
+    animation: devopsShowcase 18s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(25px);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+    transition: all 0.4s ease;
+}
+
+/* Staggered showcase animation - each item shows for 6 seconds with smooth transitions */
+.cloud-dashboard {
+    top: 15%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 350px;
+    height: 200px;
+    animation-delay: 0s;
+    z-index: 10;
+}
+
+.pipeline-visualizer {
+    top: 15%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 350px;
+    height: 180px;
+    animation-delay: 6s;
+    z-index: 9;
+}
+
+.container-orchestrator {
+    top: 15%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 350px;
+    height: 200px;
+    animation-delay: 12s;
+    z-index: 8;
+}
+
+.container-orchestrator {
+    bottom: 45%;
+    left: 5%;
+    width: 275px;
+    height: 175px;
+    animation-delay: 1.1s;
+    z-index: 8;
+}
+
+.monitoring-dashboard {
+    bottom: 5%;
+    right: 5%;
+    width: 280px;
+    height: 190px;
+    animation-delay: 1.5s;
+    z-index: 7;
+}
+
+.dashboard-header {
+    background: linear-gradient(135deg, rgba(255, 107, 53, 0.3), rgba(247, 147, 30, 0.3));
+    padding: 12px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dashboard-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: white;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.dashboard-logo i {
+    color: #ff6b35;
+    font-size: 1.1rem;
+}
+
+.status-indicators {
+    display: flex;
+    gap: 8px;
+}
+
+.status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    animation: statusPulse 2s ease-in-out infinite;
+}
+
+.status-dot.active {
+    background: #4ade80;
+    box-shadow: 0 0 10px rgba(74, 222, 128, 0.6);
+}
+
+.status-dot.warning {
+    background: #fbbf24;
+    box-shadow: 0 0 10px rgba(251, 191, 36, 0.6);
+    animation-delay: 0.5s;
+}
+
+.dashboard-content {
+    padding: 15px;
+}
+
+.resource-meters {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 15px;
+}
+
+.meter {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.8rem;
+}
+
+.meter-label {
+    color: white;
+    width: 45px;
+    font-weight: 500;
+}
+
+.meter-bar {
+    flex: 1;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.meter-fill {
+    height: 100%;
+    border-radius: 4px;
+    animation: meterFill 3s ease-out infinite;
+}
+
+.cpu-meter {
+    background: linear-gradient(90deg, #ff6b35, #f7931e);
+    width: 78%;
+}
+
+.ram-meter {
+    background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+    width: 65%;
+    animation-delay: 0.5s;
+}
+
+.storage-meter {
+    background: linear-gradient(90deg, #10b981, #059669);
+    width: 42%;
+    animation-delay: 1s;
+}
+
+.meter-value {
+    color: white;
+    font-weight: 600;
+    width: 35px;
+    text-align: right;
+}
+
+.cloud-providers {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 20px;
+    padding: 15px;
+}
+
+.provider {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: white;
+    font-size: 0.8rem;
+    font-weight: 500;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    animation: providerGlow 4s ease-in-out infinite;
+    transition: all 0.3s ease;
+}
+
+.provider:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+}
+
+.provider i {
+    font-size: 1.5rem;
+    margin-bottom: 5px;
+}
+
+.aws-provider i {
+    color: #ff9900;
+}
+
+.azure-provider i {
+    color: #0078d4;
+    animation-delay: 1.3s;
+}
+
+.gcp-provider i {
+    color: #4285f4;
+    animation-delay: 2.6s;
+}
+
+/* CI/CD Pipeline Visualizer */
+.pipeline-visualizer {
+    top: 8%;
+    right: 5%;
+    width: 300px;
+    height: 180px;
+    animation-delay: 0.7s;
+}
+
+.pipeline-header {
+    background: linear-gradient(135deg, rgba(16, 163, 127, 0.3), rgba(64, 131, 191, 0.3));
+    padding: 12px 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.pipeline-header i {
+    color: #10a37f;
+}
+
+.build-status {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.8rem;
+}
+
+.build-status.building .status-text {
+    color: #fbbf24;
+}
+
+.spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-top: 2px solid #fbbf24;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+.pipeline-stages {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px;
+    gap: 8px;
+}
+
+.stage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    min-width: 50px;
+}
+
+.stage-icon {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.stage.completed .stage-icon {
+    background: #4ade80;
+    border-color: #4ade80;
+    color: white;
+    animation: completePulse 2s ease-in-out infinite;
+}
+
+.stage.building .stage-icon {
+    background: #fbbf24;
+    border-color: #fbbf24;
+    color: white;
+    animation: buildingPulse 1.5s ease-in-out infinite;
+}
+
+.stage-label {
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.stage-progress {
+    width: 40px;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.stage-progress.complete {
+    background: #4ade80;
+}
+
+.stage-progress.building {
+    position: relative;
+}
+
+.stage-progress.building::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(90deg, transparent, #fbbf24, transparent);
+    animation: progressSlide 2s linear infinite;
+}
+
+.stage-arrow {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+.build-logs {
+    padding: 10px 15px;
+    background: rgba(0, 0, 0, 0.2);
+    font-family: 'Courier New', monospace;
+    font-size: 0.7rem;
+    max-height: 60px;
+    overflow-y: auto;
+}
+
+.log-line {
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 3px;
+    display: flex;
+    align-items: center;
+}
+
+.log-line.building {
+    color: #fbbf24;
+    animation: logBlink 1s infinite;
+}
+
+/* Container Orchestrator */
+.container-orchestrator {
+    bottom: 45%;
+    left: 5%;
+    width: 280px;
+    height: 200px;
+    animation-delay: 1.1s;
+}
+
+.orchestrator-header {
+    background: linear-gradient(135deg, rgba(0, 123, 191, 0.3), rgba(0, 174, 239, 0.3));
+    padding: 12px 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.orchestrator-header i {
+    color: #0ea5e9;
+}
+
+.node-count {
+    margin-left: auto;
+    background: rgba(14, 165, 233, 0.3);
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+}
+
+.cluster-view {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.node {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.master-node {
+    border-color: rgba(14, 165, 233, 0.5);
+}
+
+.worker-nodes {
+    display: flex;
+    gap: 8px;
+}
+
+.worker-node {
+    flex: 1;
+    border-color: rgba(34, 197, 94, 0.5);
+}
+
+.node-header {
+    color: white;
+    font-weight: 600;
+    font-size: 0.75rem;
+    margin-bottom: 8px;
+}
+
+.pods {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.pod {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 6px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.pod.running {
+    border-left: 3px solid #4ade80;
+}
+
+.pod.running i {
+    color: #4ade80;
+    animation: podPulse 2s ease-in-out infinite;
+}
+
+.pod.pending {
+    border-left: 3px solid #fbbf24;
+}
+
+.pod.pending i {
+    color: #fbbf24;
+    animation: pendingPulse 1s ease-in-out infinite;
+}
+
+/* Monitoring Dashboard */
+.monitoring-dashboard {
+    bottom: 8%;
+    right: 8%;
+    width: 300px;
+    height: 220px;
+    animation-delay: 1.5s;
+}
+
+.monitoring-header {
+    background: linear-gradient(135deg, rgba(139, 69, 19, 0.3), rgba(202, 138, 4, 0.3));
+    padding: 12px 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.monitoring-header i {
+    color: #ca8a04;
+}
+
+.alert-badge {
+    margin-left: auto;
+    background: rgba(239, 68, 68, 0.3);
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    border: 1px solid rgba(239, 68, 68, 0.5);
+}
+
+.monitoring-content {
+    padding: 15px;
+}
+
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.metric-card {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 8px;
+    border-radius: 6px;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.metric-value {
+    color: white;
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 3px;
+}
+
+.metric-label {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.65rem;
+    margin-bottom: 6px;
+}
+
+.metric-chart {
+    height: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+    position: relative;
+    overflow: hidden;
+}
+
+.uptime-chart::after,
+.requests-chart::after,
+.response-chart::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background: linear-gradient(90deg, #4ade80, #22c55e);
+    animation: chartPulse 3s ease-in-out infinite;
+}
+
+.uptime-chart::after {
+    width: 99%;
+}
+
+.requests-chart::after {
+    width: 85%;
+    background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+    animation-delay: 0.5s;
+}
+
+.response-chart::after {
+    width: 72%;
+    background: linear-gradient(90deg, #f59e0b, #d97706);
+    animation-delay: 1s;
+}
+
+.alert-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.alert {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+}
+
+.alert.warning {
+    background: rgba(251, 191, 36, 0.2);
+    border: 1px solid rgba(251, 191, 36, 0.4);
+    color: #fbbf24;
+}
+
+.alert.info {
+    background: rgba(59, 130, 246, 0.2);
+    border: 1px solid rgba(59, 130, 246, 0.4);
+    color: #3b82f6;
+}
+
+/* DevOps Technology Stack - Ultra Clean & Minimal */
+.devops-tech-stack {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.7;
+}
+
+.tech-orbit {
+    position: absolute;
+    animation: techOrbit 25s linear infinite;
+}
+
+.tech-badge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(20px);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.7rem;
+    font-weight: 500;
+    min-width: 60px;
+    animation: badgeFloat 10s ease-in-out infinite;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* Minimal Tech Badge Positioning - Less Clutter */
+.docker-orbit {
+    top: 15%;
+    right: 12%;
+    animation-delay: 0s;
+}
+
+.k8s-orbit {
+    top: 70%;
+    right: 15%;
+    animation-delay: 5s;
+}
+
+.jenkins-orbit {
+    bottom: 15%;
+    left: 12%;
+    animation-delay: 10s;
+}
+
+.terraform-orbit {
+    top: 45%;
+    left: 8%;
+    animation-delay: 15s;
+}
+
+.prometheus-orbit {
+    top: 15%;
+    left: 40%;
+    animation-delay: 20s;
+}
+
+/* Individual Tech Badge Styles */
+.docker-badge {
+    border-color: rgba(41, 128, 185, 0.5);
+}
+
+.docker-badge i {
+    color: #2980b9;
+    font-size: 1.5rem;
+}
+
+.k8s-badge {
+    border-color: rgba(52, 152, 219, 0.5);
+}
+
+.k8s-badge i {
+    color: #3498db;
+    font-size: 1.5rem;
+}
+
+.jenkins-badge {
+    border-color: rgba(211, 84, 0, 0.5);
+}
+
+.jenkins-badge i {
+    color: #d35400;
+    font-size: 1.5rem;
+}
+
+.terraform-badge {
+    border-color: rgba(123, 104, 238, 0.5);
+}
+
+.terraform-badge i {
+    color: #7b68ee;
+    font-size: 1.5rem;
+}
+
+.prometheus-badge {
+    border-color: rgba(231, 76, 60, 0.5);
+}
+
+.prometheus-badge i {
+    color: #e74c3c;
+    font-size: 1.5rem;
+}
+
+/* Network Connections - Minimal & Clean */
+.devops-connections {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    opacity: 0.3;
+}
+
+.connection-svg {
+    width: 100%;
+    height: 100%;
+}
+
+.connection-line {
+    stroke-dasharray: 8, 4;
+    animation: connectionFlow 6s linear infinite;
+    opacity: 0.6;
+}
+
+.data-particle {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: linear-gradient(135deg, rgba(255, 107, 53, 0.6), rgba(247, 147, 30, 0.6));
+    border-radius: 50%;
+    box-shadow: 0 0 8px rgba(255, 107, 53, 0.4);
+    animation: particleFlow 8s linear infinite;
+    opacity: 0.7;
+}
+
+/* Only 3 Particles for Clean Look */
+.data-particle:nth-child(1) {
+    top: 25%;
+    left: 15%;
+    animation-delay: 0s;
+}
+
+.data-particle:nth-child(2) {
+    top: 60%;
+    right: 20%;
+    animation-delay: 3s;
+}
+
+.data-particle:nth-child(3) {
+    bottom: 25%;
+    left: 40%;
+    animation-delay: 6s;
+}
+.ai-creative-lab {
+    position: relative;
+    width: 500px;
+    height: 500px;
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.ai-item {
+    position: absolute;
+    opacity: 0;
+    transform: translateY(50px) scale(0.8) rotateX(20deg);
+    animation: aiItemEntry 2.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    overflow: hidden;
+}
+
+/* Animated Chat Interface */
+.chat-interface {
+    top: 8%;
+    left: 5%;
+    width: 280px;
+    height: 320px;
+    animation-delay: 0.5s;
+}
+
+.chat-header {
+    background: linear-gradient(135deg, rgba(16, 163, 127, 0.3), rgba(64, 131, 191, 0.3));
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.chat-avatar {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #10a37f, #4083bf);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.2rem;
+    animation: avatarPulse 2s ease-in-out infinite;
+}
+
+.chat-title {
+    display: flex;
+    flex-direction: column;
+    color: white;
+}
+
+.bot-name {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.bot-status {
+    font-size: 0.75rem;
+    color: #4ade80;
+    animation: statusBlink 3s ease-in-out infinite;
+}
+
+.chat-messages {
+    padding: 15px;
+    height: 200px;
+    overflow-y: auto;
+}
+
+.message {
+    margin-bottom: 15px;
+    animation: messageSlide 1s ease-out;
+}
+
+.message-bubble {
+    padding: 10px 15px;
+    border-radius: 18px;
+    font-size: 0.85rem;
+    max-width: 80%;
+    word-wrap: break-word;
+    animation: bubbleExpand 0.5s ease-out;
+}
+
+.bot-message .message-bubble {
+    background: linear-gradient(135deg, rgba(16, 163, 127, 0.2), rgba(64, 131, 191, 0.2));
+    color: white;
+    margin-right: auto;
+}
+
+.user-message .message-bubble {
+    background: linear-gradient(135deg, rgba(255, 107, 53, 0.3), rgba(247, 147, 30, 0.3));
+    color: white;
+    margin-left: auto;
+}
+
+.typing-indicator {
+    display: flex;
+    gap: 3px;
+    margin-top: 8px;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    width: fit-content;
+}
+
+.typing-indicator span {
+    width: 6px;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 50%;
+    animation: typingDots 1.4s ease-in-out infinite;
+}
+
+.typing-indicator span:nth-child(1) { animation-delay: 0s; }
+.typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+.typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+
+.chat-input {
+    padding: 12px 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.input-field {
+    flex: 1;
+    height: 35px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 18px;
+    padding: 0 15px;
+    color: white;
+    display: flex;
+    align-items: center;
+    font-size: 0.85rem;
+}
+
+.cursor-blink {
+    animation: cursorBlink 1s infinite;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.send-btn {
+    width: 35px;
+    height: 35px;
+    background: linear-gradient(135deg, #ff6b35, #f7931e);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    animation: btnPulse 2s ease-in-out infinite;
+}
+
+.send-btn:hover {
+    transform: scale(1.1);
+}
+
+/* Workflow Board */
+.workflow-board {
+    top: 35%;
+    right: 8%;
+    width: 240px;
+    height: 180px;
+    animation-delay: 1s;
+    padding: 15px;
+}
+
+.board-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #ea4b71;
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 20px;
+}
+
+.board-header i {
+    font-size: 1.1rem;
+}
+
+.workflow-nodes {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.workflow-node {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, rgba(234, 75, 113, 0.3), rgba(234, 75, 113, 0.1));
+    border: 2px solid rgba(234, 75, 113, 0.5);
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 600;
+    animation: nodeProcess 3s ease-in-out infinite;
+}
+
+.workflow-node.trigger { animation-delay: 0s; }
+.workflow-node.process { animation-delay: 1s; }
+.workflow-node.output { animation-delay: 2s; }
+
+.workflow-node i {
+    font-size: 1rem;
+    margin-bottom: 4px;
+    color: #ea4b71;
+}
+
+.workflow-connection {
+    position: relative;
+    flex: 1;
+    height: 2px;
+    margin: 0 8px;
+}
+
+.connection-line {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(234, 75, 113, 0.5), transparent);
+}
+
+.data-flow {
+    position: absolute;
+    top: -2px;
+    left: 0;
+    width: 8px;
+    height: 6px;
+    background: #ea4b71;
+    border-radius: 50%;
+    animation: dataFlowMove 2s ease-in-out infinite;
+}
+
+/* Neural Network */
+.neural-network {
+    bottom: 8%;
+    left: 20%;
+    width: 200px;
+    height: 150px;
+    animation-delay: 1.5s;
+    padding: 15px;
+}
+
+.network-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #f7931e;
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+}
+
+.network-layers {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 80px;
+}
+
+.layer {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.neuron {
+    width: 16px;
+    height: 16px;
+    background: rgba(247, 147, 30, 0.3);
+    border: 2px solid rgba(247, 147, 30, 0.5);
+    border-radius: 50%;
+    animation: neuronPulse 2s ease-in-out infinite;
+}
+
+.neuron.active {
+    background: rgba(247, 147, 30, 0.8);
+    border-color: #f7931e;
+    box-shadow: 0 0 10px rgba(247, 147, 30, 0.6);
+}
+
+.neuron:nth-child(1) { animation-delay: 0s; }
+.neuron:nth-child(2) { animation-delay: 0.3s; }
+.neuron:nth-child(3) { animation-delay: 0.6s; }
+.neuron:nth-child(4) { animation-delay: 0.9s; }
+.neuron:nth-child(5) { animation-delay: 1.2s; }
+
+/* AI Tech Particles */
+.ai-tech-particles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.tech-particle {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* DevOps Creative Lab Animations */
+@keyframes devopsItemEntry {
+    0% {
+        opacity: 0;
+        transform: translateY(30px) scale(0.9) rotateY(10deg);
+    }
+    60% {
+        opacity: 0.8;
+        transform: translateY(-5px) scale(1.02) rotateY(-2deg);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1) rotateY(0);
+    }
+}
+
+/* DevOps Showcase Animation - Smooth Rotating Display */
+@keyframes devopsShowcase {
+    0% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(30px) scale(0.9);
+    }
+    
+    8% {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0) scale(1);
+    }
+    
+    25% {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0) scale(1);
+    }
+    
+    33% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-20px) scale(0.95);
+    }
+    
+    100% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-20px) scale(0.95);
+    }
+}
+
+@keyframes statusPulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.2);
+        opacity: 0.8;
+    }
+}
+
+@keyframes meterFill {
+    0% {
+        width: 0;
+        opacity: 0.7;
+    }
+    70% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0.9;
+    }
+}
+
+@keyframes providerGlow {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+    50% {
+        transform: scale(1.05);
+        opacity: 1;
+    }
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes completePulse {
+    0%, 100% {
+        box-shadow: 0 0 0 rgba(74, 222, 128, 0.7);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(74, 222, 128, 0.9);
+    }
+}
+
+@keyframes buildingPulse {
+    0%, 100% {
+        box-shadow: 0 0 0 rgba(251, 191, 36, 0.7);
+        transform: scale(1);
+    }
+    50% {
+        box-shadow: 0 0 15px rgba(251, 191, 36, 0.9);
+        transform: scale(1.05);
+    }
+}
+
+@keyframes progressSlide {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+@keyframes logBlink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+
+@keyframes podPulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.1);
+        opacity: 0.8;
+    }
+}
+
+@keyframes pendingPulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+@keyframes chartPulse {
+    0%, 100% {
+        transform: scaleX(1);
+        opacity: 0.8;
+    }
+    50% {
+        transform: scaleX(0.95);
+        opacity: 1;
+    }
+}
+
+@keyframes techOrbit {
+    0% {
+        transform: rotate(0deg) translateX(60px) rotate(0deg) scale(1);
+        opacity: 0.6;
+    }
+    25% {
+        transform: rotate(90deg) translateX(60px) rotate(-90deg) scale(1.02);
+        opacity: 0.8;
+    }
+    50% {
+        transform: rotate(180deg) translateX(60px) rotate(-180deg) scale(0.98);
+        opacity: 0.7;
+    }
+    75% {
+        transform: rotate(270deg) translateX(60px) rotate(-270deg) scale(1.01);
+        opacity: 0.75;
+    }
+    100% {
+        transform: rotate(360deg) translateX(60px) rotate(-360deg) scale(1);
+        opacity: 0.6;
+    }
+}
+
+@keyframes badgeFloat {
+    0%, 100% {
+        transform: translateY(0) scale(1);
+        opacity: 0.7;
+    }
+    50% {
+        transform: translateY(-5px) scale(1.01);
+        opacity: 0.9;
+    }
+}
+
+@keyframes particleFlow {
+    0% {
+        transform: translateX(0) translateY(0) scale(1);
+        opacity: 0;
+    }
+    10% {
+        opacity: 0.7;
+    }
+    90% {
+        opacity: 0.7;
+    }
+    100% {
+        transform: translateX(150px) translateY(-80px) scale(0.3);
+        opacity: 0;
+    }
+}
+
+@keyframes connectionFlow {
+    0% {
+        stroke-dashoffset: 0;
+        opacity: 0.4;
+    }
+    50% {
+        opacity: 0.6;
+    }
+    100% {
+        stroke-dashoffset: -60;
+        opacity: 0.4;
+    }
+}
+
+@keyframes connectionFlow {
+    0% {
+        stroke-dashoffset: 0;
+        opacity: 0.7;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        stroke-dashoffset: -100;
+        opacity: 0.7;
+    }
+}
+
+@keyframes particleFlow {
+    0% {
+        transform: translateX(0) translateY(0) scale(1);
+        opacity: 0;
+    }
+    10% {
+        opacity: 1;
+    }
+    90% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(200px) translateY(-100px) scale(0.5);
+        opacity: 0;
+    }
+}
+
+/* Mobile Responsive for DevOps Creative Lab */
+@media (max-width: 768px) {
+    .devops-creative-lab {
+        width: 350px;
+        height: 350px;
+        transform: scale(0.85);
+        margin: 10px auto;
+    }
+
+    .cloud-dashboard {
+        width: 240px;
+        height: 160px;
+        top: 8%;
+        left: 10%;
+    }
+
+    .pipeline-visualizer {
+        width: 250px;
+        height: 140px;
+        top: 12%;
+        right: 8%;
+    }
+
+    .container-orchestrator {
+        width: 240px;
+        height: 160px;
+        bottom: 40%;
+        left: 8%;
+    }
+
+    .monitoring-dashboard {
+        width: 250px;
+        height: 180px;
+        bottom: 12%;
+        right: 10%;
+    }
+
+    .tech-badge {
+        padding: 6px 8px;
+        min-width: 45px;
+        font-size: 0.65rem;
+    }
+
+    .tech-badge i {
+        font-size: 1.2rem;
+    }
+
+    .meter {
+        font-size: 0.75rem;
+    }
+
+    .dashboard-header,
+    .pipeline-header,
+    .orchestrator-header,
+    .monitoring-header {
+        padding: 10px 12px;
+        font-size: 0.8rem;
+    }
+
+    .pipeline-stages {
+        padding: 12px;
+        gap: 6px;
+    }
+
+    .stage-icon {
+        width: 28px;
+        height: 28px;
+        font-size: 0.8rem;
+    }
+
+    .stage-label {
+        font-size: 0.7rem;
+    }
+
+    .build-logs {
+        font-size: 0.65rem;
+        max-height: 45px;
+    }
+
+    .metrics-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+
+    .metric-card {
+        padding: 6px;
+    }
+
+    .metric-value {
+        font-size: 0.9rem;
+    }
+
+    .worker-nodes {
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .node {
+        padding: 6px;
+    }
+
+    .pod {
+        padding: 3px 5px;
+        font-size: 0.65rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .devops-creative-lab {
+        width: 280px;
+        height: 280px;
+        transform: scale(0.75);
+    }
+
+    .cloud-dashboard {
+        width: 200px;
+        height: 120px;
+    }
+
+    .pipeline-visualizer {
+        width: 200px;
+        height: 100px;
+    }
+
+    .container-orchestrator {
+        width: 200px;
+        height: 120px;
+    }
+
+    .monitoring-dashboard {
+        width: 200px;
+        height: 140px;
+    }
+
+    .tech-badge {
+        padding: 4px 6px;
+        min-width: 35px;
+        font-size: 0.6rem;
+    }
+
+    .tech-badge i {
+        font-size: 1rem;
+    }
+
+    .dashboard-content,
+    .monitoring-content {
+        padding: 10px;
+    }
+
+    .cluster-view {
+        padding: 10px;
+        gap: 8px;
+    }
+
+    .metrics-grid {
+        grid-template-columns: 1fr;
+        gap: 6px;
+    }
+
+    .pipeline-stages {
+        padding: 8px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .stage {
+        margin: 4px;
+    }
+
+    .stage-arrow {
+        display: none;
+    }
+}
+
+/* Tech Particle Styles */
+.tech-particle {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: particleOrbit 12s linear infinite;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.particle-glow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    color: white;
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.openai-particle {
+    top: 20%;
+    right: 15%;
+    background: linear-gradient(135deg, rgba(16, 163, 127, 0.3), rgba(16, 163, 127, 0.1));
+    animation-delay: 0s;
+}
+
+.tensorflow-particle {
+    top: 60%;
+    right: 10%;
+    background: linear-gradient(135deg, rgba(255, 111, 0, 0.3), rgba(255, 111, 0, 0.1));
+    animation-delay: 3s;
+}
+
+.python-particle {
+    bottom: 20%;
+    left: 15%;
+    background: linear-gradient(135deg, rgba(55, 118, 171, 0.3), rgba(55, 118, 171, 0.1));
+    animation-delay: 6s;
+}
+
+.ml-particle {
+    top: 40%;
+    left: 10%;
+    background: linear-gradient(135deg, rgba(156, 39, 176, 0.3), rgba(156, 39, 176, 0.1));
+    animation-delay: 9s;
+}
+
+/* Enhanced DevOps Visualization - Creative Layout */
+.devops-diagram {
+    position: relative;
+    width: 500px;
+    height: 400px;
+    max-width: 100%;
+    max-height: 100%;
+    margin: 20px auto;
+    overflow: visible;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    padding: 30px;
+}
+
+/* Creative Grid Layout for DevOps */
+.devops-item {
+    position: absolute;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+    backdrop-filter: blur(20px);
+    padding: 18px 22px;
+    border-radius: 18px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    font-weight: 700;
+    text-align: center;
+    min-width: 95px;
+    opacity: 0;
+    transform: translateY(40px) scale(0.7) rotate(-10deg);
+    animation: creativeDevOpsEntry 2.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+    transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    z-index: 15;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.devops-item:hover {
+    transform: translateY(-12px) scale(1.15) rotate(0deg);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.2));
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    border-color: rgba(255, 179, 0, 0.8);
+}
+
+/* Creative Hexagonal Layout */
+.devops-item.aws {
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(40px) scale(0.7) rotate(-10deg);
+    animation-delay: 1.2s;
+}
+
+.devops-item.azure {
+    top: 100px;
+    left: 80px;
+    animation-delay: 1.5s;
+}
+
+.devops-item.docker {
+    top: 100px;
+    right: 80px;
+    animation-delay: 1.8s;
+}
+
+.devops-item.k8s {
+    bottom: 100px;
+    left: 80px;
+    animation-delay: 2.1s;
+}
+
+.devops-item.jenkins {
+    bottom: 100px;
+    right: 80px;
+    animation-delay: 2.4s;
+}
+
+.devops-item.monitoring {
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(40px) scale(0.7) rotate(-10deg);
+    animation-delay: 2.7s;
+}
+
+.devops-item.n8n-devops {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) translateY(40px) scale(0.7) rotate(-10deg);
+    animation-delay: 3.0s;
+    background: linear-gradient(135deg, rgba(234, 75, 113, 0.3), rgba(234, 75, 113, 0.1));
+    border-color: rgba(234, 75, 113, 0.6);
+}
+
+.devops-item.n8n-devops i { color: #EA4B71; }
+
+/* Creative DevOps Connection Lines */
+.devops-diagram::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 200px;
+    height: 200px;
+    border: 2px dashed rgba(255, 179, 0, 0.4);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    animation: rotateConnection 20s linear infinite;
+    z-index: 5;
+}
+
+.devops-diagram::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 300px;
+    height: 300px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    animation: rotateConnection 30s linear infinite reverse;
+    z-index: 4;
+}
+
+/* Enhanced DevOps Item Icons */
+.devops-item i {
+    font-size: 2.2rem;
+    margin-bottom: 8px;
+    display: block;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+    transition: all 0.3s ease;
+}
+
+.devops-item:hover i {
+    transform: scale(1.2) rotate(10deg);
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4));
+}
+
+/* Specific Color Enhancements */
+.devops-item.aws i { 
+    color: #FF9900; 
+    text-shadow: 0 0 10px rgba(255, 153, 0, 0.5);
+}
+
+.devops-item.docker i { 
+    color: #2496ED; 
+    text-shadow: 0 0 10px rgba(36, 150, 237, 0.5);
+}
+
+.devops-item.k8s i { 
+    color: #326CE5; 
+    text-shadow: 0 0 10px rgba(50, 108, 229, 0.5);
+}
+
+.devops-item.azure i { 
+    color: #0078D4; 
+    text-shadow: 0 0 10px rgba(0, 120, 212, 0.5);
+}
+
+.devops-item.jenkins {
+    top: 80px;
+    right: 30px;
+    animation-delay: 1.8s;
+}
+
+.devops-item.jenkins i { 
+    color: #D33833; 
+    text-shadow: 0 0 10px rgba(211, 56, 51, 0.5);
+}
+
+.devops-item.monitoring {
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    animation-delay: 2.5s;
+}
+
+.devops-item.monitoring i { 
+    color: #00D2FF; 
+    text-shadow: 0 0 10px rgba(0, 210, 255, 0.5);
+}
+
+/* Creative Floating DevOps Particles */
+.devops-diagram .devops-particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: rgba(255, 179, 0, 0.8);
+    border-radius: 50%;
+    opacity: 0;
+    animation: floatParticle 8s ease-in-out infinite;
+}
+
+.devops-diagram .devops-particle:nth-child(1) {
+    top: 20%;
+    left: 15%;
+    animation-delay: 0s;
+}
+
+.devops-diagram .devops-particle:nth-child(2) {
+    top: 30%;
+    right: 20%;
+    animation-delay: 2s;
+    background: rgba(36, 150, 237, 0.8);
+}
+
+.devops-diagram .devops-particle:nth-child(3) {
+    bottom: 25%;
+    left: 25%;
+    animation-delay: 4s;
+    background: rgba(50, 108, 229, 0.8);
+}
+
+.devops-diagram .devops-particle:nth-child(4) {
+    bottom: 35%;
+    right: 15%;
+    animation-delay: 6s;
+    background: rgba(0, 120, 212, 0.8);
+}
+
+/* DevOps Data Flow Lines */
+.devops-flow-line {
+    position: absolute;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(255, 179, 0, 0.6), transparent);
+    opacity: 0;
+    animation: flowLine 4s ease-in-out infinite;
+    z-index: 3;
+}
+
+.devops-flow-line:nth-child(odd) {
+    animation-delay: 1s;
+}
+
+@keyframes floatParticle {
+    0%, 100% {
+        opacity: 0;
+        transform: translateY(0px) scale(0.5);
+    }
+    50% {
+        opacity: 1;
+        transform: translateY(-30px) scale(1.2);
+    }
+}
+
+@keyframes flowLine {
+    0%, 100% {
+        opacity: 0;
+        width: 0%;
+    }
+    50% {
+        opacity: 1;
+        width: 100%;
+    }
+}
+
+/* Creative DevOps Pipeline Animation */
+@keyframes pipelineFlow {
+    0% {
+        stroke-dashoffset: 100;
+    }
+    100% {
+        stroke-dashoffset: 0;
+    }
+}
+
+/* Enhanced Connection Network */
+.connection-network {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    pointer-events: none;
+}
+
+.connection-svg {
+    width: 100%;
+    height: 100%;
+}
+
+.connection-path {
+    stroke-dasharray: 10 5;
+    animation: pipelineFlow 8s linear infinite;
+    filter: drop-shadow(0 0 3px rgba(255, 179, 0, 0.5));
+}
+
+/* Data Packet Animation */
+.data-packet {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: radial-gradient(circle, rgba(255, 179, 0, 1) 0%, rgba(255, 179, 0, 0) 100%);
+    border-radius: 50%;
+    animation: movePacket 6s ease-in-out infinite;
+    z-index: 5;
+}
+
+@keyframes movePacket {
+    0%, 100% {
+        top: 20%;
+        left: 20%;
+        opacity: 0;
+        transform: scale(0.5);
+    }
+    25% {
+        top: 30%;
+        left: 80%;
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        top: 80%;
+        left: 75%;
+        opacity: 1;
+        transform: scale(1.2);
+    }
+    75% {
+        top: 85%;
+        left: 25%;
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Premium DevOps Icons */
+.devops-item.premium {
+    position: relative;
+    overflow: visible;
+}
+
+/* AWS Custom Icon */
+.cloud-icon-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+.aws-logo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.aws-smile {
+    width: 25px;
+    height: 12px;
+    border-bottom: 3px solid #FF9900;
+    border-radius: 0 0 25px 25px;
+    position: relative;
+    margin-bottom: 5px;
+}
+
+.aws-smile::before {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    right: -3px;
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 6px solid #FF9900;
+    transform: rotate(20deg);
+}
+
+.aws-text {
+    color: #FF9900;
+    font-size: 0.7rem;
+    font-weight: bold;
+}
+
+/* Azure Custom Icon */
+.azure-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.azure-squares {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    width: 20px;
+    height: 20px;
+}
+
+.square {
+    background: #0078D4;
+    animation: azure-pulse 2s ease-in-out infinite;
+}
+
+.square:nth-child(1) { animation-delay: 0s; }
+.square:nth-child(2) { animation-delay: 0.5s; }
+.square:nth-child(3) { animation-delay: 1s; }
+.square:nth-child(4) { animation-delay: 1.5s; }
+
+/* Docker Custom Icon */
+.container-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.docker-whale {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.whale-body {
+    width: 30px;
+    height: 8px;
+    background: #2496ED;
+    border-radius: 0 0 15px 15px;
+    margin-bottom: 3px;
+}
+
+.containers {
+    display: flex;
+    gap: 2px;
+}
+
+.container-box {
+    width: 6px;
+    height: 8px;
+    background: rgba(36, 150, 237, 0.8);
+    border-radius: 1px;
+    animation: container-bounce 1.5s ease-in-out infinite;
+}
+
+.container-box:nth-child(2) { animation-delay: 0.3s; }
+.container-box:nth-child(3) { animation-delay: 0.6s; }
+
+/* Kubernetes Custom Icon */
+.k8s-icon-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.helm-wheel {
+    position: relative;
+    width: 30px;
+    height: 30px;
+    animation: wheel-spin 8s linear infinite;
+}
+
+.wheel-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 8px;
+    height: 8px;
+    background: #326CE5;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.wheel-spokes {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.spoke {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 2px;
+    height: 15px;
+    background: #326CE5;
+    transform-origin: center bottom;
+    transform: translate(-50%, -100%) rotate(calc(var(--i, 0) * 51.43deg));
+}
+
+.spoke:nth-child(1) { --i: 0; }
+.spoke:nth-child(2) { --i: 1; }
+.spoke:nth-child(3) { --i: 2; }
+.spoke:nth-child(4) { --i: 3; }
+.spoke:nth-child(5) { --i: 4; }
+.spoke:nth-child(6) { --i: 5; }
+.spoke:nth-child(7) { --i: 6; }
+
+/* n8n DevOps Custom Icon */
+.n8n-devops-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.workflow-diagram {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.workflow-node {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #EA4B71;
+}
+
+.workflow-node.start {
+    background: #10A37F;
+    animation: node-pulse 1.5s ease-in-out infinite;
+}
+
+.workflow-node.process {
+    background: #EA4B71;
+    animation: node-pulse 1.5s ease-in-out infinite 0.5s;
+}
+
+.workflow-node.end {
+    background: #326CE5;
+    animation: node-pulse 1.5s ease-in-out infinite 1s;
+}
+
+.workflow-connector {
+    width: 8px;
+    height: 1px;
+    background: linear-gradient(90deg, #EA4B71, transparent, #EA4B71);
+}
+
+/* CI/CD Custom Icon */
+.cicd-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pipeline-flow {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+}
+
+.pipeline-stage {
+    width: 6px;
+    height: 10px;
+    border-radius: 2px;
+    animation: pipeline-flow 2s ease-in-out infinite;
+}
+
+.pipeline-stage.build {
+    background: #28A745;
+    animation-delay: 0s;
+}
+
+.pipeline-stage.test {
+    background: #FFC107;
+    animation-delay: 0.7s;
+}
+
+.pipeline-stage.deploy {
+    background: #DC3545;
+    animation-delay: 1.4s;
+}
+
+.pipeline-arrow {
+    width: 0;
+    height: 0;
+    border-top: 3px solid transparent;
+    border-bottom: 3px solid transparent;
+    border-left: 4px solid #D33833;
+}
+
+/* Monitoring Custom Icon */
+.monitoring-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.monitoring-chart {
+    position: relative;
+    width: 25px;
+    height: 20px;
+}
+
+.chart-line {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #00D2FF, transparent);
+    animation: chart-line-move 2s ease-in-out infinite;
+}
+
+.chart-bars {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    align-items: flex-end;
+    gap: 2px;
+    height: 15px;
+}
+
+.bar {
+    flex: 1;
+    background: rgba(0, 210, 255, 0.8);
+    border-radius: 1px 1px 0 0;
+    animation: bar-grow 1.5s ease-in-out infinite;
+}
+
+.bar:nth-child(1) { animation-delay: 0s; }
+.bar:nth-child(2) { animation-delay: 0.3s; }
+.bar:nth-child(3) { animation-delay: 0.6s; }
+.bar:nth-child(4) { animation-delay: 0.9s; }
+
+/* Connection Network */
+.connection-network {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.connection-svg {
+    width: 100%;
+    height: 100%;
+}
+
+.connection-path {
+    stroke-dasharray: 10;
+    animation: connection-flow 6s linear infinite;
+}
+
+/* DevOps Tech Glow Effects */
+.devops-item .tech-glow {
+    position: absolute;
+    top: -15px;
+    left: -15px;
+    right: -15px;
+    bottom: -15px;
+    border-radius: 15px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.devops-item:hover .tech-glow {
+    opacity: 1;
+}
+
+.aws-glow { box-shadow: 0 0 25px rgba(255, 153, 0, 0.6); }
+.azure-glow { box-shadow: 0 0 25px rgba(0, 120, 212, 0.6); }
+.docker-glow { box-shadow: 0 0 25px rgba(36, 150, 237, 0.6); }
+.k8s-glow { box-shadow: 0 0 25px rgba(50, 108, 229, 0.6); }
+.n8n-devops-glow { box-shadow: 0 0 25px rgba(234, 75, 113, 0.6); }
+.jenkins-glow { box-shadow: 0 0 25px rgba(211, 56, 51, 0.6); }
+.monitoring-glow { box-shadow: 0 0 25px rgba(0, 210, 255, 0.6); }
+
+/* Automation Indicators */
+.automation-indicators {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+}
+
+.indicator {
+    position: absolute;
+    font-size: 2rem;
+    color: #ffb300;
+    font-weight: bold;
+    animation: flow-indicator 4s ease-in-out infinite;
+    animation-delay: var(--delay);
+}
+
+.indicator:nth-child(1) {
+    top: 25%;
+    left: 60%;
+}
+
+.indicator:nth-child(2) {
+    top: 45%;
+    right: 15%;
+}
+
+.indicator:nth-child(3) {
+    bottom: 25%;
+    right: 40%;
+}
+
+.indicator:nth-child(4) {
+    bottom: 45%;
+    left: 15%;
+}
+
+@keyframes flow-indicator {
+    0%, 100% { 
+        opacity: 0.3;
+        transform: scale(0.8);
+    }
+    50% { 
+        opacity: 1;
+        transform: scale(1.2);
+    }
+}
+
+/* AI Visualization */
+.ai-visualization {
+    position: relative;
+    width: 300px;
+    height: 300px;
+    animation: slideInRight 1s ease-out 0.5s both;
+}
+
+.ai-node {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(15px);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffb300;
+    font-size: 1.8rem;
+    opacity: 0;
+    transform: scale(0.3);
+    animation: smoothAINodeIn 2.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.ai-node:hover {
+    transform: scale(1.15);
+    background: rgba(255, 255, 255, 0.25);
+    box-shadow: 0 10px 30px rgba(255, 179, 0, 0.4);
+}
+
+.ai-node.central {
+    top: 50%;
+    left: 50%;
+    width: 80px;
+    height: 80px;
+    transform: translate(-50%, -50%) scale(0.3);
+    position: relative;
+    animation: smoothAICentralIn 2.8s cubic-bezier(0.34, 1.56, 0.64, 1) 1s forwards,
+               gentleRotate 15s linear 3.8s infinite;
+}
+
+.pulse-ring {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    border: 2px solid rgba(255, 179, 0, 0.3);
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation: pulse-ring 2s ease-out infinite;
+}
+
+.ai-node.satellite {
+    width: 60px;
+    height: 60px;
+    top: 50%;
+    left: 50%;
+    transform-origin: 0 0;
+    transform: translate(-50%, -50%) rotate(var(--angle)) translateY(-120px) scale(0.3);
+    animation: smoothAISatelliteIn 2.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards,
+               gentleOrbit 12s linear 4.2s infinite;
+    animation-delay: var(--delay, 0s);
+}
+
+/* AI Technology Nodes */
+.tech-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.tech-logo.premium {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    backdrop-filter: blur(10px);
+}
+
+.ai-logo {
+    width: 30px;
+    height: 30px;
+    filter: brightness(0) invert(1);
+}
+
+.ai-label {
+    position: absolute;
+    bottom: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.7rem;
+    color: white;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 4px 10px;
+    border-radius: 12px;
+    white-space: nowrap;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+/* Enhanced AI Brain */
+.ai-brain-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.neural-network {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+}
+
+.neuron {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: #ffb300;
+    border-radius: 50%;
+    animation: neuron-pulse 2s ease-in-out infinite;
+}
+
+.neuron:nth-child(1) { top: 10px; left: 20px; animation-delay: 0s; }
+.neuron:nth-child(2) { bottom: 10px; right: 15px; animation-delay: 0.7s; }
+.neuron:nth-child(3) { top: 30px; right: 10px; animation-delay: 1.4s; }
+
+/* Custom OpenAI Icon */
+.openai-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.openai-circle {
+    width: 35px;
+    height: 35px;
+    border: 3px solid #10A37F;
+    border-radius: 50%;
+    position: relative;
+}
+
+.openai-text {
+    position: absolute;
+    color: #10A37F;
+    font-size: 0.7rem;
+    font-weight: bold;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* Custom n8n Icon */
+.n8n-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.workflow-dots {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 8px;
+}
+
+.workflow-dots span {
+    width: 8px;
+    height: 8px;
+    background: #EA4B71;
+    border-radius: 50%;
+    animation: workflow-pulse 1.5s ease-in-out infinite;
+}
+
+.workflow-dots span:nth-child(2) { animation-delay: 0.5s; }
+.workflow-dots span:nth-child(3) { animation-delay: 1s; }
+
+.workflow-lines {
+    width: 30px;
+    height: 2px;
+    background: linear-gradient(90deg, #EA4B71, transparent, #EA4B71);
+}
+
+/* Custom ML Icon */
+.ml-icon {
+    position: relative;
+    width: 40px;
+    height: 40px;
+}
+
+.data-nodes {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    width: 100%;
+    height: 100%;
+}
+
+.node {
+    width: 12px;
+    height: 12px;
+    background: rgba(255, 179, 0, 0.5);
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.node.active {
+    background: #ffb300;
+    box-shadow: 0 0 10px rgba(255, 179, 0, 0.6);
+}
+
+.ml-connections {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 2px;
+    height: 30px;
+    background: linear-gradient(180deg, #ffb300, transparent, #ffb300);
+    transform: translate(-50%, -50%);
+}
+
+/* Custom TensorFlow Icon */
+.tf-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.tf-layers {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.layer {
+    width: 30px;
+    height: 4px;
+    background: rgba(255, 179, 0, 0.5);
+    border-radius: 2px;
+}
+
+.layer.active {
+    background: #FF6F00;
+    box-shadow: 0 0 8px rgba(255, 111, 0, 0.6);
+}
+
+/* Custom ChatGPT Icon */
+.chatgpt-icon {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.chat-bubble {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    width: 8px;
+    height: 8px;
+    background: #10A37F;
+    border-radius: 50%;
+    animation: chat-pulse 2s ease-in-out infinite;
+}
+
+/* Tech Glow Effects */
+.tech-glow {
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+    border-radius: 50%;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.ai-node:hover .tech-glow {
+    opacity: 1;
+}
+
+.openai-glow { box-shadow: 0 0 20px rgba(16, 163, 127, 0.6); }
+.n8n-glow { box-shadow: 0 0 20px rgba(234, 75, 113, 0.6); }
+.ml-glow { box-shadow: 0 0 20px rgba(255, 179, 0, 0.6); }
+.tf-glow { box-shadow: 0 0 20px rgba(255, 111, 0, 0.6); }
+.chatgpt-glow { box-shadow: 0 0 20px rgba(16, 163, 127, 0.6); }
+
+/* Enhanced Data Streams */
+.automation-flow.advanced {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 280px;
+    height: 280px;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+}
+
+.data-stream {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 3px;
+    height: 80px;
+    background: linear-gradient(to bottom, 
+        transparent, 
+        rgba(255, 179, 0, 0.8), 
+        rgba(16, 163, 127, 0.6),
+        transparent
+    );
+    transform-origin: 0 0;
+    transform: translate(-50%, -50%) rotate(var(--flow-angle)) translateY(-140px);
+    opacity: 0.8;
+    animation: data-flow 4s ease-in-out infinite;
+}
+
+/* Enhanced AI Particles */
+.ai-particle.premium {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 25px;
+    height: 25px;
+    transform: translate(var(--x), var(--y));
+    animation: premium-float 6s ease-in-out infinite;
+    animation-delay: var(--delay);
+}
+
+.particle-glow {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(255, 179, 0, 0.2);
+    backdrop-filter: blur(10px);
+    color: #ffb300;
+    font-size: 1rem;
+    box-shadow: 0 0 15px rgba(255, 179, 0, 0.4);
+}
+
+.openai-node { --delay: 1.2s; }
+.n8n-node { --delay: 1.6s; }
+.ml-node { --delay: 2.0s; }
+.tf-node { --delay: 2.4s; }
+.chatgpt-node { --delay: 2.8s; }
+
+/* Automation Flow Lines */
+.automation-flow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 240px;
+    height: 240px;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+}
+
+.flow-line {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 2px;
+    height: 60px;
+    background: linear-gradient(to bottom, transparent, #ffb300, transparent);
+    transform-origin: 0 0;
+    transform: translate(-50%, -50%) rotate(var(--start-angle)) translateY(-120px);
+    opacity: 0.6;
+    animation: flow-pulse 3s ease-in-out infinite;
+}
+
+/* AI Particles */
+.ai-particle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    color: rgba(255, 179, 0, 0.7);
+    font-size: 0.8rem;
+    transform: translate(var(--x), var(--y));
+    animation: float-particle 4s ease-in-out infinite;
+    animation-delay: var(--delay);
+}
+
+@keyframes flow-pulse {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 0.8; }
+}
+
+@keyframes float-particle {
+    0%, 100% { 
+        transform: translate(var(--x), var(--y)) scale(1);
+        opacity: 0.7;
+    }
+    50% { 
+        transform: translate(calc(var(--x) + 10px), calc(var(--y) - 10px)) scale(1.2);
+        opacity: 1;
+    }
+}
+
+/* Statistics */
+.hero-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+    margin-bottom: 40px;
+    animation: slideInLeft 1s ease-out 0.6s both;
+}
+
+.stat {
+    text-align: center;
+    color: white;
+}
+
+.stat h3 {
+    font-size: 3rem;
+    font-weight: 800;
+    color: #ffb300;
+    margin-bottom: 10px;
+}
+
+.stat p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+/* Slider Controls */
+.slider-controls {
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 30px;
+    z-index: 10;
+    transform: translateY(-50%);
+}
+
+.slider-btn {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(15px);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.slider-btn:hover {
+    background: rgba(255, 179, 0, 0.2);
+    border-color: #ffb300;
+    transform: scale(1.1);
+}
+
+/* Slider Indicators */
+.slider-indicators {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 15px;
+    z-index: 10;
+}
+
+.indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.4);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.indicator.active {
+    background: #ffb300;
+    transform: scale(1.2);
+}
+
+.indicator:hover {
+    background: rgba(255, 179, 0, 0.7);
+}
+
+/* Animations */
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Enhanced Smooth Animations */
+/* Creative Animation Keyframes */
+@keyframes creativeItemEntry {
+    0% {
+        opacity: 0;
+        transform: translateY(60px) scale(0.7) rotateY(-30deg);
+    }
+    60% {
+        opacity: 0.8;
+        transform: translateY(-10px) scale(1.1) rotateY(10deg);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1) rotateY(0deg);
+    }
+}
+
+@keyframes dotPulse {
+    0%, 100% { transform: scale(1); opacity: 0.8; }
+    50% { transform: scale(1.3); opacity: 1; }
+}
+
+@keyframes typeWriter {
+    0%, 50% { opacity: 0; }
+    50%, 100% { opacity: 1; }
+}
+
+@keyframes blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+}
+
+@keyframes swatchFloat {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-8px); }
+}
+
+@keyframes toolFloat {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-5px) rotate(5deg); }
+}
+
+@keyframes contentPulse {
+    0%, 100% { opacity: 0.7; transform: scaleX(1); }
+    50% { opacity: 1; transform: scaleX(1.05); }
+}
+
+@keyframes btnPulse {
+    0%, 100% { transform: scale(1); box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
+    50% { transform: scale(1.05); box-shadow: 0 5px 20px rgba(255,107,53,0.3); }
+}
+
+@keyframes mobilePulse {
+    0%, 100% { 
+        opacity: 0.3; 
+        transform: scale(1); 
+    }
+    50% { 
+        opacity: 0.8; 
+        transform: scale(1.05); 
+    }
+}
+
+@keyframes floatAround {
+    0%, 100% { 
+        transform: translateX(0px) translateY(0px) rotate(0deg); 
+    }
+    25% { 
+        transform: translateX(20px) translateY(-15px) rotate(90deg); 
+    }
+    50% { 
+        transform: translateX(0px) translateY(-30px) rotate(180deg); 
+    }
+    75% { 
+        transform: translateX(-20px) translateY(-15px) rotate(270deg); 
+    }
+}
+
+@keyframes smoothSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes smoothSlideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(60px) scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+    }
+}
+
+@keyframes smoothFloatIn {
+    0% {
+        opacity: 0;
+        transform: translateY(50px) scale(0.7) rotate(-5deg);
+    }
+    60% {
+        opacity: 0.8;
+        transform: translateY(-10px) scale(1.05) rotate(2deg);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1) rotate(0deg);
+    }
+}
+
+@keyframes smoothDevOpsIn {
+    0% {
+        opacity: 0;
+        transform: translateY(40px) scale(0.6);
+    }
+    50% {
+        opacity: 0.7;
+        transform: translateY(-5px) scale(1.1);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-20px) rotate(5deg); }
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+@keyframes pulse-ring {
+    0% {
+        transform: translate(-50%, -50%) scale(0.5);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(1.2);
+        opacity: 0;
+    }
+}
+
+@keyframes rotate {
+    from { transform: translate(-50%, -50%) rotate(0deg); }
+    to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+@keyframes orbit {
+    from { transform: translate(-50%, -50%) rotate(0deg) translateY(-120px); }
+    to { transform: translate(-50%, -50%) rotate(360deg) translateY(-120px); }
+}
+
+/* Enhanced AI Animations */
+@keyframes smoothAINodeIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.3) rotate(-180deg);
+    }
+    50% {
+        opacity: 0.7;
+        transform: scale(1.2) rotate(-90deg);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1) rotate(0deg);
+    }
+}
+
+@keyframes smoothAICentralIn {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.2);
+    }
+    60% {
+        opacity: 0.8;
+        transform: translate(-50%, -50%) scale(1.3);
+    }
+    100% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+@keyframes smoothAISatelliteIn {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) rotate(var(--angle)) translateY(-120px) scale(0.2);
+    }
+    60% {
+        opacity: 0.8;
+        transform: translate(-50%, -50%) rotate(var(--angle)) translateY(-120px) scale(1.2);
+    }
+    100% {
+        opacity: 1;
+        transform: translate(-50%, -50%) rotate(var(--angle)) translateY(-120px) scale(1);
+    }
+}
+
+@keyframes gentleRotate {
+    from { transform: translate(-50%, -50%) rotate(0deg); }
+    to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+@keyframes gentleOrbit {
+    from { transform: translate(-50%, -50%) rotate(var(--angle)) translateY(-120px); }
+    to { transform: translate(-50%, -50%) rotate(calc(var(--angle) + 360deg)) translateY(-120px); }
+}
+
+@keyframes continuousFloat {
+    0%, 100% { 
+        opacity: 0;
+        transform: translateY(0px);
+    }
+    50% { 
+        opacity: 1;
+        transform: translateY(-5px);
+    }
+}
+
+/* Creative DevOps Animations */
+@keyframes creativeDevOpsEntry {
+    0% {
+        opacity: 0;
+        transform: translateY(60px) scale(0.5) rotate(-30deg);
+    }
+    40% {
+        opacity: 0.7;
+        transform: translateY(-20px) scale(1.2) rotate(15deg);
+    }
+    70% {
+        opacity: 0.9;
+        transform: translateY(10px) scale(0.95) rotate(-5deg);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1) rotate(0deg);
+    }
+}
+
+@keyframes rotateConnection {
+    0% {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+    100% {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}
+
+/* Enhanced DevOps Glow Effects */
+@keyframes devopsGlow {
+    0%, 100% {
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+    50% {
+        box-shadow: 0 8px 32px rgba(255, 179, 0, 0.4), 0 0 20px rgba(255, 179, 0, 0.2);
+    }
+}
+
+/* Creative DevOps Background Pulse */
+@keyframes devopsBackgroundPulse {
+    0%, 100% {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+        border-color: rgba(255, 255, 255, 0.2);
+    }
+    50% {
+        background: linear-gradient(135deg, rgba(255, 179, 0, 0.15), rgba(255, 179, 0, 0.08));
+        border-color: rgba(255, 179, 0, 0.4);
+    }
+}
+
+/* Apply pulsing to DevOps diagram */
+.devops-diagram {
+    animation: devopsBackgroundPulse 6s ease-in-out infinite;
+    position: relative;
+}
+
+/* DevOps Network Grid Overlay */
+.devops-diagram::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 280px;
+    height: 280px;
+    border: 2px dashed rgba(255, 179, 0, 0.3);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    animation: rotateConnection 25s linear infinite;
+    z-index: 1;
+}
+
+.devops-diagram::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 200px;
+    height: 200px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    animation: rotateConnection 35s linear infinite reverse;
+    z-index: 1;
+    box-shadow: inset 0 0 20px rgba(255, 179, 0, 0.1);
+}
+
+/* Creative DevOps Item Entry with Bounce */
+.devops-item {
+    animation: creativeDevOpsEntry 2.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards,
+               devopsGlow 4s ease-in-out infinite 3s;
+    position: relative;
+    z-index: 10;
+}
+
+.btn:hover {
+    background: #ffa000;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255,179,0,0.4);
+}
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+#about {
+    padding: 80px 0;
+    background: #fff;
+}
+.about-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 50px;
+    align-items: center;
+    margin-top: 40px;
+}
+.about-text p {
+    font-size: 1.1rem;
+    margin-bottom: 20px;
+    color: #555;
+}
+.about-features {
+    margin-top: 30px;
+}
+.feature {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+.feature-icon {
+    background: #4caf50;
+    color: white;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+    font-weight: bold;
+}
+.about-image .team-img {
+    width: 100%;
+    height: 400px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(60,60,100,0.15);
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+.about-image .team-img:hover {
+    transform: scale(1.02);
+}
+#services {
+    padding: 80px 0;
+    background: #f8f9fa;
+}
+.services-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 35px;
+    margin-top: 50px;
+}
+.service {
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 5px 25px rgba(60,60,100,0.08);
+    padding: 35px 25px;
+    text-align: center;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+}
+.service:hover {
+    box-shadow: 0 10px 40px rgba(60,60,100,0.15);
+    transform: translateY(-8px);
+}
+.service::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #ffb300, #3949ab);
+}
+.icon-anim {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 25px;
+}
+.service-icon {
+    width: 60px;
+    height: 60px;
+    animation: iconBounce 2s infinite alternate;
+}
+.service-icon path {
+    transition: fill 0.3s ease;
+}
+.service:hover .service-icon path {
+    filter: brightness(1.2);
+}
+.service h3 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    color: #1a237e;
+}
+.service p {
+    font-size: 1rem;
+    color: #666;
+    margin-bottom: 20px;
+}
+.service-features {
+    list-style: none;
+    padding: 0;
+    margin: 20px 0;
+}
+.service-features li {
+    padding: 8px 0;
+    color: #555;
+    position: relative;
+    padding-left: 25px;
+    font-size: 0.95rem;
+}
+.service-features li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: #4caf50;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+.service-img {
+    width: 100%;
+    height: 200px;
+    max-width: 250px;
+    border-radius: 12px;
+    margin-top: 20px;
+    box-shadow: 0 4px 15px rgba(60,60,100,0.10);
+    transition: transform 0.3s ease, filter 0.3s ease;
+    object-fit: cover;
+}
+.service:hover .service-img {
+    transform: scale(1.05);
+    filter: brightness(1.1);
+}
+#portfolio {
+    padding: 80px 0;
+    background: #fff;
+}
+.portfolio-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 35px;
+    margin-top: 50px;
+}
+.portfolio-item {
+    background: #f8f9fa;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 5px 20px rgba(60,60,100,0.08);
+    transition: transform 0.3s;
+}
+.portfolio-item:hover {
+    transform: translateY(-5px);
+}
+.portfolio-item:hover .portfolio-img {
+    transform: scale(1.05);
+    filter: brightness(1.1);
+}
+.portfolio-img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 12px 12px 0 0;
+    transition: transform 0.3s ease, filter 0.3s ease;
+}
+.portfolio-content {
+    padding: 25px;
+}
+.portfolio-content h3 {
+    color: #1a237e;
+    margin-bottom: 10px;
+}
+.tech-stack {
+    background: #e3f2fd;
+    color: #1565c0;
+    padding: 5px 12px;
+    border-radius: 15px;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+#team {
+    padding: 80px 0;
+    background: #f8f9fa;
+}
+.team-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+    margin-top: 50px;
+}
+.team-member {
+    background: #fff;
+    border-radius: 20px;
+    padding: 35px 25px;
+    text-align: center;
+    box-shadow: 0 8px 25px rgba(60,60,100,0.12);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255,179,0,0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.team-member::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, #ffb300, #ff6b35);
+    transition: left 0.5s ease;
+}
+
+.team-member:hover::before {
+    left: 0;
+}
+
+.team-member:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 35px rgba(60,60,100,0.15);
+    border-color: rgba(255,179,0,0.3);
+}
+.team-img {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin: 0 auto 20px;
+    border: 4px solid #ffb300;
+    transition: transform 0.3s ease, filter 0.3s ease;
+}
+.team-member:hover .team-img {
+    transform: scale(1.1);
+    filter: brightness(1.1);
+}
+.team-member h3 {
+    color: #1a237e;
+    font-size: 1.4rem;
+    margin: 15px 0 8px 0;
+    font-weight: 700;
+}
+
+.team-role {
+    color: #ffb300;
+    font-weight: 600;
+    margin: 8px 0 15px 0;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.team-desc {
+    color: #666;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin: 0;
+}
+#blog {
+    padding: 80px 0;
+    background: #fff;
+}
+.blog-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 35px;
+    margin-top: 50px;
+}
+.blog-post {
+    background: #f8f9fa;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(60,60,100,0.08);
+    padding: 25px 20px;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s;
+    position: relative;
+}
+.blog-post:hover {
+    transform: translateY(-5px);
+}
+.blog-img {
+    display: none;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    margin-bottom: 15px;
+    object-fit: cover;
+    box-shadow: 0 3px 10px rgba(60,60,100,0.15);
+    align-self: flex-start;
+    transition: transform 0.3s ease, filter 0.3s ease;
+    border: 3px solid #ffb300;
+    flex-shrink: 0;
+}
+.blog-post:hover .blog-img {
+    transform: scale(1.1);
+    filter: brightness(1.1);
+}
+
+.story-header {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.story-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    flex: 1;
+}
+
+.story-info h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: #1a237e;
+}
+
+.story-info .blog-author {
+    font-size: 0.9rem;
+    color: #ffb300;
+    font-weight: 600;
+    margin: 0;
+}
+
+.story-info .rating {
+    font-size: 1rem;
+    margin-top: 2px;
+}
+
+.blog-post h3 {
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+    color: #1a237e;
+}
+.blog-post p {
+    font-size: 1rem;
+    margin: 0;
+    color: #555;
+    font-style: italic;
+    line-height: 1.6;
+}
+
+#contact {
+    padding: 80px 0;
+    background: #1a237e;
+    color: #fff;
+}
+#contact h2 {
+    color: #fff;
+}
+#contact .section-subtitle {
+    color: #ccc;
+}
+.contact-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    margin-top: 50px;
+}
+.contact-info h3 {
+    margin-bottom: 30px;
+    color: #ffb300;
+}
+.contact-item {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 25px;
+}
+.contact-icon {
+    font-size: 1.5rem;
+    margin-right: 15px;
+    margin-top: 5px;
+}
+.contact-item h4 {
+    margin: 0 0 8px 0;
+    color: #ffb300;
+}
+.contact-item p {
+    margin: 0;
+    line-height: 1.6;
+}
+.contact-form {
+    background: #fff;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+.contact-form h3 {
+    color: #1a237e;
+    margin-bottom: 25px;
+    text-align: center;
+}
+.contact-form input,
+.contact-form select,
+.contact-form textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    font-size: 1rem;
+    margin-bottom: 20px;
+    transition: border-color 0.3s;
+}
+.contact-form input:focus,
+.contact-form select:focus,
+.contact-form textarea:focus {
+    outline: none;
+    border-color: #3949ab;
+}
+.contact-form textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+.contact-form button {
+    width: 100%;
+}
+.contact-form #contact-status { 
+    padding: 10px 14px; 
+    border-radius: 8px; 
+    background: #f4f6fb; 
+    border: 1px solid #e0e3ee; 
+}
+#technologies {
+    padding: 100px 0;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    position: relative;
+    overflow: hidden;
+}
+
+#technologies::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+    animation: float 20s ease-in-out infinite;
+}
+
+#technologies h2 {
+    color: white;
+    font-size: 3rem;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+#technologies .section-subtitle {
+    color: rgba(255,255,255,0.9);
+    font-size: 1.3rem;
+}
+
+.tech-categories {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 50px;
+    margin-top: 60px;
+    position: relative;
+    z-index: 2;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.tech-category {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(15px);
+    padding: 40px 30px;
+    border-radius: 20px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    transition: all 0.4s ease;
+    transform: translateY(20px);
+    opacity: 0;
+    animation: slideUp 0.8s ease forwards;
+}
+
+.tech-category:nth-child(1) { animation-delay: 0.1s; }
+.tech-category:nth-child(2) { animation-delay: 0.2s; }
+.tech-category:nth-child(3) { animation-delay: 0.3s; }
+.tech-category:nth-child(4) { animation-delay: 0.4s; }
+
+.tech-category:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+    background: rgba(255, 255, 255, 0.25);
+}
+
+.tech-category h3 {
+    color: white;
+    margin-bottom: 35px;
+    font-size: 1.6rem;
+    text-align: center;
+    border-bottom: 3px solid #ffb300;
+    padding-bottom: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.tech-category h3 i {
+    font-size: 1.4rem;
+    color: #ffb300;
+}
+
+.tech-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 25px;
+    align-items: center;
+}
+
+.tech-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 15px;
+    border-radius: 15px;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    cursor: pointer;
+    position: relative;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+.tech-item:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-10px) scale(1.1);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+    border-color: #ffb300;
+}
+
+.tech-icon-wrapper {
+    width: 60px;
+    height: 60px;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.tech-icon-wrapper::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: radial-gradient(circle, rgba(255,179,0,0.3), transparent);
+    border-radius: 50%;
+    transition: all 0.4s ease;
+    transform: translate(-50%, -50%);
+}
+
+.tech-item:hover .tech-icon-wrapper::before {
+    width: 100px;
+    height: 100px;
+}
+
+.tech-icon {
+    font-size: 2.5rem;
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 2;
+}
+
+/* Technology specific colors */
+.react-icon { color: #61DAFB !important; }
+.angular-icon { color: #DD0031 !important; }
+.vue-icon { color: #4FC08D !important; }
+.js-icon { color: #F7DF1E !important; }
+.html-icon { color: #E34F26 !important; }
+.css-icon { color: #1572B6 !important; }
+
+.node-icon { color: #339933 !important; }
+.python-icon { color: #3776AB !important; }
+.php-icon { color: #777BB4 !important; }
+.java-icon { color: #ED8B00 !important; }
+.laravel-icon { color: #FF2D20 !important; }
+.django-icon { color: #092E20 !important; }
+
+.flutter-icon { color: #02569B !important; }
+.react-native-icon { color: #61DAFB !important; }
+.android-icon { color: #3DDC84 !important; }
+.ios-icon { color: #000000 !important; }
+.kotlin-icon { color: #7F52FF !important; }
+.swift-icon { color: #FA7343 !important; }
+
+.aws-icon { color: #FF9900 !important; }
+.azure-icon { color: #0078D4 !important; }
+.gcp-icon { color: #4285F4 !important; }
+.docker-icon { color: #2496ED !important; }
+.k8s-icon { color: #326CE5 !important; }
+.jenkins-icon { color: #D33833 !important; }
+
+/* AI & Automation Icons */
+.openai-icon { color: #412991 !important; }
+.n8n-icon { color: #EA4B71 !important; }
+.zapier-icon { color: #FF4A00 !important; }
+.chatgpt-icon { color: #10A37F !important; }
+.tensorflow-icon { color: #FF6F00 !important; }
+.automation-icon { color: #607D8B !important; }
+
+.tech-item:hover .tech-icon {
+    transform: scale(1.2) rotate(5deg);
+    filter: drop-shadow(0 5px 10px rgba(0,0,0,0.3));
+}
+
+.tech-item span {
+    font-size: 1rem;
+    font-weight: 600;
+    color: white;
+    text-align: center;
+    margin-bottom: 10px;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+}
+
+.tech-progress {
+    width: 100%;
+    height: 4px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: 5px;
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #ffb300, #ff6b35);
+    width: 0%;
+    transition: width 1.5s ease;
+    border-radius: 2px;
+    position: relative;
+}
+
+.progress-bar::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    animation: shimmer 2s infinite;
+}
+
+.tech-item:hover .progress-bar {
+    width: var(--progress) !important;
+}
+
+@keyframes slideUp {
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-20px) rotate(180deg); }
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+footer {
+    background: #1a237e;
+    color: #fff;
+    text-align: center;
+    padding: 25px 0;
+    font-size: 1rem;
+    letter-spacing: 0.5px;
+    border-top: 3px solid #ffb300;
+}
+@keyframes iconBounce {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-10px) scale(1.05); }
+}
+@keyframes fadeInDown {
+    0% { opacity: 0; transform: translateY(-30px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeInUp {
+    0% { opacity: 0; transform: translateY(30px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Tablet responsive styles */
+@media (max-width: 1024px) and (min-width: 769px) {
+    .tech-categories { 
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 40px; 
+    }
+    
+    .tech-grid { 
+        grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+        gap: 22px; 
+    }
+    
+    .tech-item {
+        padding: 16px 12px;
+    }
+    
+    .tech-icon {
+        font-size: 2.3rem;
+    }
+    
+    .tech-icon-wrapper {
+        width: 58px;
+        height: 58px;
+    }
+    
+    .banner-slider {
+        height: 75vh;
+    }
+    
+    .slide-title {
+        font-size: 3.2rem;
+    }
+    
+    .slide-description {
+        font-size: 1.2rem;
+    }
+    
+    .container {
+        max-width: 95%;
+    }
+}
+
+@media (max-width: 768px) {
+    /* Enhanced Banner Mobile Styles */
+    .banner-slider {
+        overflow: visible; /* Allow content to breathe on mobile */
+    }
+    
+    .slide-content {
+        flex-direction: column;
+        gap: 30px;
+        text-align: center;
+        padding: 40px 20px;
+        justify-content: center;
+        height: auto;
+        min-height: 100vh;
+    }
+    
+    .slide-title {
+        font-size: 2.8rem;
+        line-height: 1.2;
+        margin-bottom: 15px;
+        animation: smoothSlideUp 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.2s forwards;
+    }
+    
+    .slide-subtitle {
+        font-size: 1.2rem;
+        margin-bottom: 25px;
+        padding: 0 10px;
+        animation: smoothSlideUp 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.4s forwards;
+    }
+    
+    .slide-features {
+        justify-content: center;
+        margin-bottom: 35px;
+        flex-wrap: wrap;
+        max-width: 100%;
+        animation: smoothSlideUp 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.6s forwards;
+    }
+    
+    .feature-pill {
+        font-size: 0.9rem;
+        padding: 10px 18px;
+        margin: 4px;
+        transition: all 0.3s ease;
+    }
+    
+    .slide-buttons {
+        flex-direction: column;
+        width: 100%;
+        max-width: 320px;
+        margin: 0 auto;
+        gap: 15px;
+        animation: smoothSlideUp 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.8s forwards;
+    }
+    
+    .btn {
+        width: 100%;
+        justify-content: center;
+        padding: 14px 30px;
+        font-size: 1.1rem;
+        font-weight: 600;
+    }
+    
+    .slide-visual {
+        display: block;
+        transform: scale(0.8);
+        opacity: 0.7;
+        animation: smoothSlideUp 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) 1s forwards;
+    }
+    
+    /* Creative Showcase Mobile Styles */
+    .creative-showcase {
+        width: 320px;
+        height: 400px;
+        margin: 0 auto;
+    }
+    
+    .code-editor {
+        width: 240px;
+        top: 5%;
+        left: 50%;
+        transform: translateX(-50%) translateY(40px) scale(0.8) rotateY(-20deg);
+    }
+    
+    .design-palette {
+        width: 160px;
+        top: 40%;
+        right: 5%;
+        padding: 15px;
+    }
+    
+    .mobile-mockup {
+        bottom: 5%;
+        left: 50%;
+        transform: translateX(-50%) translateY(40px) scale(0.8) rotateY(-20deg);
+    }
+    
+    .phone-frame {
+        width: 120px;
+        height: 240px;
+        border-radius: 20px;
+    }
+    
+    .tech-icon-float {
+        width: 35px;
+        height: 35px;
+        font-size: 1.1rem;
+    }
+    
+    .floating-tech-icons {
+        opacity: 0.7;
+    }
+    
+    /* Enhanced AI & DevOps Mobile Styles */
+    .ai-visualization,
+    .devops-diagram {
+        width: 350px;
+        height: 300px;
+        margin: 10px auto;
+        padding: 20px;
+    }
+    
+    .devops-item {
+        padding: 12px 16px;
+        min-width: 75px;
+        font-size: 0.85rem;
+        border-radius: 12px;
+    }
+    
+    .devops-item i {
+        font-size: 1.8rem;
+        margin-bottom: 6px;
+    }
+    
+    /* Creative Mobile DevOps Layout */
+    .devops-item.aws {
+        top: 15px;
+        left: 50%;
+        transform: translateX(-50%) translateY(40px) scale(0.7) rotate(-10deg);
+    }
+    
+    .devops-item.azure {
+        top: 80px;
+        left: 40px;
+    }
+    
+    .devops-item.docker {
+        top: 80px;
+        right: 40px;
+    }
+    
+    .devops-item.k8s {
+        bottom: 80px;
+        left: 40px;
+    }
+    
+    .devops-item.jenkins {
+        bottom: 80px;
+        right: 40px;
+    }
+    
+    .devops-item.monitoring {
+        bottom: 15px;
+        left: 50%;
+        transform: translateX(-50%) translateY(40px) scale(0.7) rotate(-10deg);
+    }
+    
+    .devops-item.n8n-devops {
+        top: 45%;
+        left: 50%;
+        transform: translate(-50%, -50%) translateY(40px) scale(0.7) rotate(-10deg);
+    }
+    
+    /* Mobile DevOps Particles - Smaller and fewer */
+    .devops-diagram .devops-particle {
+        width: 3px;
+        height: 3px;
+    }
+    
+    .devops-flow-line {
+        height: 1px;
+        opacity: 0.6;
+    }
+    
+    .ai-node {
+        font-size: 1.4rem;
+    }
+    
+    .ai-node.central {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .ai-node.satellite {
+        width: 45px;
+        height: 45px;
+    }
+    
+    /* Success Stories Mobile Styles */
+    .story-header {
+        gap: 12px;
+        margin-bottom: 15px;
+    }
+    
+    .blog-img {
+        width: 50px;
+        height: 50px;
+        border-width: 2px;
+    }
+    
+    .story-info h3 {
+        font-size: 1.1rem;
+    }
+    
+    .story-info .blog-author {
+        font-size: 0.85rem;
+    }
+    
+    .story-info .rating {
+        font-size: 0.9rem;
+    }
+    
+    .blog-post {
+        padding: 20px 15px;
+    }
+    
+    .slider-controls {
+        padding: 0 20px;
+    }
+    
+    .slider-btn {
+        width: 45px;
+        height: 45px;
+        font-size: 1rem;
+    }
+    
+    .container {
+        padding: 0 20px;
+    }
+    
+    .hero h2 { font-size: 2.2rem; }
+    .hero p { font-size: 1.1rem; padding: 0 10px; }
+    .hero-stats { gap: 30px; flex-direction: column; }
+    .stat { margin: 10px 0; }
+    .about-content { grid-template-columns: 1fr; gap: 30px; }
+    .contact-content { grid-template-columns: 1fr; gap: 40px; }
+    .services-list { grid-template-columns: 1fr; }
+    .portfolio-list { grid-template-columns: 1fr; }
+    .team-list { 
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
+        gap: 25px;
+    }
+    
+    .team-member {
+        padding: 25px 20px;
+    }
+    
+    .team-img {
+        width: 100px;
+        height: 100px;
+        margin-bottom: 15px;
+    }
+    
+    .team-member h3 {
+        font-size: 1.2rem;
+    }
+    
+    .team-role {
+        font-size: 0.9rem;
+    }
+    
+    .team-desc {
+        font-size: 0.9rem;
+    }
+    .blog-list { grid-template-columns: 1fr; }
+    
+    /* Enhanced technology section for mobile */
+    .tech-categories { 
+        grid-template-columns: 1fr; 
+        gap: 25px; 
+        margin-top: 35px;
+    }
+    
+    .tech-category {
+        padding: 25px 15px;
+        margin: 0 5px;
+        border-radius: 15px;
+    }
+    
+    .tech-grid { 
+        grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+        gap: 15px; 
+    }
+    
+    .tech-item {
+        padding: 12px 8px;
+    }
+    
+    .tech-icon {
+        font-size: 1.8rem;
+    }
+    
+    .tech-icon-wrapper {
+        width: 45px;
+        height: 45px;
+    }
+    
+    .tech-item span {
+        font-size: 0.85rem;
+        margin-top: 8px;
+    }
+    
+    #technologies h2 {
+        font-size: 2rem;
+        margin-bottom: 12px;
+    }
+    
+    #technologies .section-subtitle {
+        font-size: 1rem;
+        margin-bottom: 25px;
+        padding: 0 10px;
+    }
+    
+    .tech-category h3 {
+        font-size: 1.2rem;
+        margin-bottom: 20px;
+    }
+    
+    #technologies {
+        padding: 70px 0;
+    }
+    
+    /* Header adjustments for mobile */
+    .header-flex {
+        flex-direction: column;
+        gap: 20px;
+    }
+    nav ul {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    nav ul li {
+        margin: 5px 10px;
+    }
+    .hero {
+        padding: 100px 0 60px 0;
+        margin-top: 120px;
+    }
+    .company-name {
+        font-size: 1.5rem;
+    }
+    .logo {
+        height: 40px;
+        width: 40px;
+    }
+}
+
+/* Extra small screens (phones) */
+@media (max-width: 480px) {
+    #technologies h2 {
+        font-size: 1.6rem;
+        margin-bottom: 8px;
+    }
+    
+    #technologies .section-subtitle {
+        font-size: 0.9rem;
+        margin-bottom: 20px;
+        padding: 0 5px;
+    }
+    
+    .tech-categories {
+        margin-top: 25px;
+        gap: 20px;
+    }
+    
+    .tech-category {
+        padding: 20px 10px;
+        margin: 0;
+        border-radius: 12px;
+    }
+    
+    .tech-category h3 {
+        font-size: 1rem;
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+    }
+    
+    .tech-category h3 i {
+        font-size: 1.1rem;
+    }
+    
+    .tech-grid {
+        grid-template-columns: repeat(auto-fit, minmax(75px, 1fr));
+        gap: 12px;
+    }
+    
+    .tech-item {
+        padding: 10px 6px;
+    }
+    
+    .tech-icon {
+        font-size: 1.5rem;
+    }
+    
+    .tech-icon-wrapper {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .tech-item span {
+        font-size: 0.75rem;
+        margin-top: 6px;
+        line-height: 1.2;
+    }
+    
+    .tech-progress {
+        height: 3px;
+        margin-top: 6px;
+    }
+    
+    #technologies {
+        padding: 50px 0;
+    }
+    
+    .container {
+        padding: 0 10px;
+    }
+    
+    /* Banner improvements for small screens */
+    .banner-slider {
+        height: 60vh;
+        min-height: 400px;
+    }
+    
+    .slide-content {
+        padding: 15px;
+        gap: 20px;
+    }
+    
+    .slide-title {
+        font-size: 1.8rem;
+        line-height: 1.2;
+    }
+    
+    .slide-description {
+        font-size: 0.9rem;
+        line-height: 1.4;
+    }
+    
+    .slide-buttons {
+        gap: 10px;
+    }
+    
+    .btn {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+    }
+}
+
+/* Large screens optimization */
+@media (min-width: 1400px) {
+    .tech-categories {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 60px;
+        max-width: 1400px;
+        margin: 60px auto 0;
+    }
+    
+    .tech-category {
+        padding: 50px 40px;
+    }
+    
+    .tech-grid {
+        gap: 30px;
+        grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    }
+    
+    .tech-item {
+        padding: 25px 20px;
+    }
+    
+    .tech-icon {
+        font-size: 3rem;
+    }
+    
+    .tech-icon-wrapper {
+        width: 70px;
+        height: 70px;
+    }
+    
+    .tech-item span {
+        font-size: 1.1rem;
+    }
+    
+    .container {
+        max-width: 1300px;
+    }
+    
+    .banner-slider {
+        height: 90vh;
+    }
+    
+    .slide-title {
+        font-size: 4rem;
+    }
+    
+    .slide-description {
+        font-size: 1.4rem;
+    }
+}
+
+/* Responsive utility classes */
+.mobile-only {
+    display: none;
+}
+
+.desktop-only {
+    display: block;
+}
+
+@media (max-width: 768px) {
+    .mobile-only {
+        display: block;
+    }
+    
+    .desktop-only {
+        display: none;
+    }
+}
+
+/* Enhanced responsive images */
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+.service-img, .portfolio-img, .team-img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    border-radius: 15px;
+}
+
+/* Responsive typography improvements */
+@media (max-width: 768px) {
+    h1 { font-size: 2rem; }
+    h2 { font-size: 1.8rem; }
+    h3 { font-size: 1.4rem; }
+    h4 { font-size: 1.2rem; }
+    h5 { font-size: 1.1rem; }
+    h6 { font-size: 1rem; }
+    
+    p, li {
+        font-size: 0.95rem;
+        line-height: 1.6;
+    }
+}
+
+@media (max-width: 480px) {
+    h1 { font-size: 1.8rem; }
+    h2 { font-size: 1.6rem; }
+    h3 { font-size: 1.3rem; }
+    h4 { font-size: 1.1rem; }
+    h5 { font-size: 1rem; }
+    h6 { font-size: 0.95rem; }
+    
+    p, li {
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+}
+
+/* DevOps Mobile - Ultra Clean Layout */
+@media (max-width: 768px) {
+    .devops-creative-lab {
+        width: 450px;
+        height: 450px;
+        transform: scale(0.9);
+        margin: 15px auto;
+    }
+
+    .cloud-dashboard {
+        width: 220px;
+        height: 140px;
+        top: 8%;
+        left: 8%;
+    }
+
+    .pipeline-visualizer {
+        width: 210px;
+        height: 120px;
+        top: 8%;
+        right: 8%;
+    }
+
+    .container-orchestrator {
+        width: 215px;
+        height: 135px;
+        bottom: 48%;
+        left: 8%;
+    }
+
+    .monitoring-dashboard {
+        width: 220px;
+        height: 150px;
+        bottom: 8%;
+        right: 8%;
+    }
+
+    /* Cleaner Mobile Tech Badges */
+    .tech-badge {
+        padding: 6px 8px;
+        min-width: 45px;
+        font-size: 0.6rem;
+        opacity: 0.8;
+    }
+
+    .tech-badge i {
+        font-size: 1rem;
+    }
+
+    /* Simplified Mobile Headers */
+    .dashboard-header,
+    .pipeline-header,
+    .orchestrator-header,
+    .monitoring-header {
+        padding: 8px 10px;
+        font-size: 0.75rem;
+    }
+
+    /* Reduce Mobile Particles */
+    .data-particle {
+        width: 4px;
+        height: 4px;
+        opacity: 0.5;
+    }
+
+    .devops-connections {
+        opacity: 0.2;
+    }
+}
+
+@media (max-width: 480px) {
+    .devops-creative-lab {
+        width: 350px;
+        height: 350px;
+        transform: scale(0.85);
+    }
+
+    .cloud-dashboard,
+    .pipeline-visualizer,
+    .container-orchestrator,
+    .monitoring-dashboard {
+        width: 170px;
+        height: 110px;
+    }
+
+    .tech-badge {
+        padding: 4px 6px;
+        min-width: 35px;
+        font-size: 0.55rem;
+    }
+
+    .tech-badge i {
+        font-size: 0.9rem;
+    }
+
+    /* Hide tech stack on ultra mobile for cleaner look */
+    .devops-tech-stack {
+        display: none;
+    }
+
+    .devops-connections {
+        opacity: 0.1;
+    }
+}
+@keyframes premium-float {
+    0%, 100% { 
+        transform: translate(var(--x), var(--y)) scale(1) rotate(0deg);
+        opacity: 0.8;
+    }
+    50% { 
+        transform: translate(calc(var(--x) + 15px), calc(var(--y) - 15px)) scale(1.1) rotate(180deg);
+        opacity: 1;
+    }
+}
+
+@keyframes neuron-pulse {
+    0%, 100% { 
+        opacity: 0.5;
+        transform: scale(1);
+    }
+    50% { 
+        opacity: 1;
+        transform: scale(1.5);
+    }
+}
+
+@keyframes workflow-pulse {
+    0%, 100% { 
+        opacity: 0.6;
+        transform: scale(1);
+    }
+    50% { 
+        opacity: 1;
+        transform: scale(1.3);
+    }
+}
+
+@keyframes chat-pulse {
+    0%, 100% { 
+        opacity: 0.7;
+        transform: scale(1);
+    }
+    50% { 
+        opacity: 1;
+        transform: scale(1.2);
+    }
+}
+
+@keyframes data-flow {
+    0% { 
+        opacity: 0;
+        transform: translate(-50%, -50%) rotate(var(--flow-angle)) translateY(-100px) scale(0.8);
+    }
+    50% { 
+        opacity: 1;
+        transform: translate(-50%, -50%) rotate(var(--flow-angle)) translateY(-140px) scale(1);
+    }
+    100% { 
+        opacity: 0;
+        transform: translate(-50%, -50%) rotate(var(--flow-angle)) translateY(-180px) scale(1.2);
+    }
+}
+
+@keyframes azure-pulse {
+    0%, 100% { 
+        opacity: 0.7;
+        transform: scale(1);
+    }
+    50% { 
+        opacity: 1;
+        transform: scale(1.1);
+    }
+}
+
+@keyframes container-bounce {
+    0%, 100% { 
+        transform: translateY(0);
+    }
+    50% { 
+        transform: translateY(-3px);
+    }
+}
+
+@keyframes wheel-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes node-pulse {
+    0%, 100% { 
+        opacity: 0.8;
+        transform: scale(1);
+        box-shadow: 0 0 5px currentColor;
+    }
+    50% { 
+        opacity: 1;
+        transform: scale(1.3);
+        box-shadow: 0 0 15px currentColor;
+    }
+}
+
+@keyframes pipeline-flow {
+    0%, 100% { 
+        opacity: 0.6;
+        transform: scaleY(1);
+    }
+    50% { 
+        opacity: 1;
+        transform: scaleY(1.2);
+    }
+}
+
+@keyframes chart-line-move {
+    0% { 
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+    50% { 
+        opacity: 1;
+    }
+    100% { 
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+@keyframes bar-grow {
+    0%, 100% { 
+        transform: scaleY(0.8);
+        opacity: 0.7;
+    }
+    50% { 
+        transform: scaleY(1.1);
+        opacity: 1;
+    }
+}
+
+@keyframes connection-flow {
+    0% { 
+        stroke-dashoffset: 100;
+        opacity: 0.5;
+    }
+    50% { 
+        opacity: 1;
+    }
+    100% { 
+        stroke-dashoffset: -100;
+        opacity: 0.5;
+    }
+}
+
+/* AI Creative Lab Animations */
+@keyframes aiItemEntry {
+    0% {
+        opacity: 0;
+        transform: translateY(50px) scale(0.8) rotateX(20deg);
+    }
+    60% {
+        opacity: 0.8;
+        transform: translateY(-10px) scale(1.05) rotateX(-5deg);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1) rotateX(0);
+    }
+}
+
+@keyframes avatarPulse {
+    0%, 100% { 
+        transform: scale(1);
+        box-shadow: 0 0 0 rgba(16, 163, 127, 0.7);
+    }
+    50% { 
+        transform: scale(1.1);
+        box-shadow: 0 0 20px rgba(16, 163, 127, 0.3);
+    }
+}
+
+@keyframes statusBlink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+
+@keyframes messageSlide {
+    0% {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes bubbleExpand {
+    0% {
+        transform: scale(0.8);
+        opacity: 0.8;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes typingDots {
+    0%, 60%, 100% {
+        transform: translateY(0);
+        opacity: 0.5;
+    }
+    30% {
+        transform: translateY(-6px);
+        opacity: 1;
+    }
+}
+
+@keyframes cursorBlink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+@keyframes btnPulse {
+    0%, 100% { 
+        transform: scale(1);
+        box-shadow: 0 0 0 rgba(255, 107, 53, 0.7);
+    }
+    50% { 
+        transform: scale(1.05);
+        box-shadow: 0 0 15px rgba(255, 107, 53, 0.4);
+    }
+}
+
+@keyframes nodeProcess {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 rgba(234, 75, 113, 0.5);
+    }
+    25% {
+        transform: scale(1.1);
+        box-shadow: 0 0 15px rgba(234, 75, 113, 0.8);
+    }
+    50% {
+        transform: scale(0.95);
+        box-shadow: 0 0 25px rgba(234, 75, 113, 0.6);
+    }
+    75% {
+        transform: scale(1.05);
+        box-shadow: 0 0 20px rgba(234, 75, 113, 0.7);
+    }
+}
+
+@keyframes dataFlowMove {
+    0% {
+        left: 0;
+        opacity: 0;
+    }
+    20% {
+        opacity: 1;
+    }
+    80% {
+        opacity: 1;
+    }
+    100% {
+        left: calc(100% - 8px);
+        opacity: 0;
+    }
+}
+
+@keyframes neuronPulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 0.7;
+        box-shadow: 0 0 0 rgba(247, 147, 30, 0.5);
+    }
+    50% {
+        transform: scale(1.3);
+        opacity: 1;
+        box-shadow: 0 0 15px rgba(247, 147, 30, 0.8);
+    }
+}
+
+@keyframes particleOrbit {
+    0% {
+        transform: rotate(0deg) translateX(40px) rotate(0deg) scale(1);
+        opacity: 0.7;
+    }
+    25% {
+        transform: rotate(90deg) translateX(40px) rotate(-90deg) scale(1.1);
+        opacity: 1;
+    }
+    50% {
+        transform: rotate(180deg) translateX(40px) rotate(-180deg) scale(0.9);
+        opacity: 0.8;
+    }
+    75% {
+        transform: rotate(270deg) translateX(40px) rotate(-270deg) scale(1.05);
+        opacity: 0.9;
+    }
+    100% {
+        transform: rotate(360deg) translateX(40px) rotate(-360deg) scale(1);
+        opacity: 0.7;
+    }
+}
